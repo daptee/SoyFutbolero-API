@@ -2,30 +2,47 @@
   <v-app id="inspire">
     <v-navigation-drawer v-model="drawer" dark app>
       <!-- Slide Menu  -->
-            <v-list shaped>
-            <v-subheader>Soy Futbolero</v-subheader>
-            <v-list-item-group
-                v-model="selectedItem"
-                color="primary"
-            >
-                <v-list-item
-                v-for="(item, i) in items"
-                :key="i"
-                >
-                <v-list-item-icon>
-                    <v-icon v-text="item.icon"></v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                    <v-list-item-title v-text="item.text"></v-list-item-title>
-                </v-list-item-content>
-                </v-list-item>
-            </v-list-item-group>
+            <v-list>
+                <v-subheader>Soy Futbolero</v-subheader>
+
+                    <template>
+                        <v-list-item :to="{name: 'Login'}">
+                            <v-list-item-icon>
+                                <v-icon>mdi-account</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Usuarios</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </template>
+
+                    <template>
+                        <v-list-item :to="{name: 'Equipos'}">
+                            <v-list-item-icon>
+                                <v-icon>mdi-shield-account</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Equipos</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </template>
+
+                    <template>
+                        <v-list-item :to="{name: 'Estadios'}">
+                            <v-list-item-icon>
+                                <v-icon>mdi-bank</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Estadios</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </template>
             </v-list>
 
 
     </v-navigation-drawer>
 
-    <v-app-bar  dark app>
+    <v-app-bar dark app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-toolbar-title>Soy Futbolero</v-toolbar-title>
@@ -33,6 +50,7 @@
 
     <v-main>
       <!--  -->
+      <router-view/>
     </v-main>
   </v-app>
 </template>
