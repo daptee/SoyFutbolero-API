@@ -109,20 +109,10 @@ export default {
           id_tipo:""
       },
       defaultItem: {
-        name: '',
-        codigo: '',
-        categoria:{
           nombre:"",
           bandera:"",
           escudo:"",
-          tipo:{
-              id:"",
-              tipo:""
-          }
-        },
-        descripcion: '',
-        stock: 0,
-        precio_venta:0
+          id_tipo:""
       },
     }),
     computed: {

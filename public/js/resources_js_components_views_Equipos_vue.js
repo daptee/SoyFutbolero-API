@@ -145,20 +145,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         id_tipo: ""
       },
       defaultItem: {
-        name: '',
-        codigo: '',
-        categoria: {
-          nombre: "",
-          bandera: "",
-          escudo: "",
-          tipo: {
-            id: "",
-            tipo: ""
-          }
-        },
-        descripcion: '',
-        stock: 0,
-        precio_venta: 0
+        nombre: "",
+        bandera: "",
+        escudo: "",
+        id_tipo: ""
       }
     };
   },
