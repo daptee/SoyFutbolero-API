@@ -2,7 +2,10 @@
     <v-container>
         <v-row>
             <v-col cols="12">
-                <v-data-table :headers="headers"  :items="equipos" sort-by="nombre" class="elevation-1" width="100%">
+                <v-data-table :headers="headers"  :items="teams" sort-by="nombre" class="elevation-1" width="100%">
+                    <template v-slot:item.tipo="{ item }">
+                        {{ item.tipo.tipo  }}
+                    </template>
                     <template v-slot:item.estado="{ item }">
                       <v-chip :color="getColor(item.estado)" dark>
                         {{ item.estado == 1 ?  'Habilitado' : 'Deshabilitado'  }}
@@ -29,11 +32,8 @@
                                   <v-col cols="12" sm="6" md="4">
                                       <v-text-field v-model="editedItem.nombre" label="Nombre"></v-text-field>
                                   </v-col>
-                                  <v-col cols="12" sm="6" md="4" v-if="editedIndex > -1">
-                                      <v-text-field v-model="editedItem.categoria.nombre" label="Bandera" ></v-text-field>
-                                  </v-col>
-                                  <v-col cols="12" sm="6" md="4" v-else>
-                                    <v-select v-model="articulo_categoria" :items="categories" item-text="Estado" item-value="_id" label="Categorias" persistent-hint return-object single-line/>
+                                  <v-col cols="12" sm="6" md="4">
+                                    <v-select v-model="tipo_equipo" :items="type_teams" item-text="nombre" item-value="id" label="Tipo" persistent-hint single-line/>
                                   </v-col>
                                 </v-row>
                             </v-container>
@@ -52,7 +52,7 @@
                         </v-dialog>
                         <v-dialog v-model="dialogDelete" max-width="60%">
                         <v-card>
-                            <v-card-title class="headline">Esta por deshabilitar el articulo: "{{ editedItem.nombre}}", esta seguro?</v-card-title>
+                            <v-card-title class="headline">Esta por deshabilitar el eqiopo: "{{ editedItem.nombre}}", esta seguro?</v-card-title>
                             <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
@@ -88,6 +88,7 @@
 
 
 <script>
+import { mapState, mapActions } from 'vuex'
 
 export default {
     data: () => ({
@@ -95,27 +96,29 @@ export default {
       dialogDelete: false,
       headers: [
         { text: 'Nombre', sortable: false, value: 'nombre' },
-        { text: 'Bandera', value: 'bandera' },
+        { text: 'Tipo', value: 'tipo' },
         { text: 'Estado', value: 'estado' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      articulo_categoria:'',
+      tipo_equipo:'',
       editedIndex: -1,
       editedItem: {
-        name: '',
-        codigo: '',
-        categoria:{
-          nombre:""
-        },
-        descripcion: '',
-        stock: 0,
-        precio_venta:0
+          nombre:"",
+          bandera:"",
+          escudo:"",
+          id_tipo:""
       },
       defaultItem: {
         name: '',
         codigo: '',
         categoria:{
-          nombre:""
+          nombre:"",
+          bandera:"",
+          escudo:"",
+          tipo:{
+              id:"",
+              tipo:""
+          }
         },
         descripcion: '',
         stock: 0,
@@ -123,9 +126,10 @@ export default {
       },
     }),
     computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'Agregar Equipos' : 'Editar Equipos'
-      },
+        ...mapState(['teams','type_teams']),
+        formTitle () {
+            return this.editedIndex === -1 ? 'Agregar Equipos' : 'Editar Equipos'
+        },
     },
     watch: {
       dialog (val) {
@@ -136,78 +140,67 @@ export default {
       },
     },
     created () {
-      this.getArticulos()
-      this.getCategories()
+      this.getTeams()
     },
     methods: {
-      getColor (state) {
-        return state == 1 ?  'green' : 'red'
-      },
-      editItem (item) {
-        this.editedIndex = this.articulos.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-      deshabilitarItem(item) {
-        this.editedItem = {...item}
-        this.dialogDelete = true
-      },
-      async habilitar(item){
-        try{
-          await activateArticulo(item)
-          this.getArticulos()
-        }catch(error){
-          console.log(error)
+        ...mapActions(['getTeams','createTeam','editTeam']),
+        getColor (state) {
+            return state == 1 ?  'green' : 'red'
+        },
+        editItem (item) {
+            this.editedIndex = this.teams.indexOf(item)
+            this.tipo_equipo = item.tipo.id
+            this.editedItem = Object.assign({}, item)
+            delete this.editedItem.tipo
+            this.dialog = true
+        },
+        deshabilitarItem(item) {
+            this.editedItem = {...item}
+            this.dialogDelete = true
+        },
+        async habilitar(item){
+            try{
+            await activateArticulo(item)
+            this.getArticulos()
+            }catch(error){
+            console.log(error)
+            }
+        },
+        async deleteItemConfirm() {
+            try{
+            await deactivateArticulo(this.editedItem)
+            this.getArticulos()
+            this.closeDelete()
+            }catch(error){
+            console.log(error)
+            }
+        },
+        close () {
+            this.dialog = false
+            this.$nextTick(() => {
+            this.editedItem = Object.assign({}, this.defaultItem)
+            this.editedIndex = -1
+            })
+        },
+        closeDelete () {
+            this.dialogDelete = false
+            this.$nextTick(() => {
+            this.editedItem = Object.assign({}, this.defaultItem)
+            this.editedIndex = -1
+            })
+        },
+        async save () {
+            if (this.editedIndex > -1) {
+                this.editedItem.id_tipo = this.tipo_equipo
+                await this.editTeam(this.editedItem)
+            } else {
+                this.editedItem.id_tipo = this.tipo_equipo
+                this.editedItem.bandera = this.editedItem.nombre
+                this.editedItem.escudo = this.editedItem.nombre
+                await this.createTeam(this.editedItem)
+            }
+            this.close()
         }
-      },
-      async deleteItemConfirm() {
-        try{
-          await deactivateArticulo(this.editedItem)
-          this.getArticulos()
-          this.closeDelete()
-        }catch(error){
-          console.log(error)
-        }
-      },
-      close () {
-        this.dialog = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-      async save () {
-        if (this.editedIndex > -1) {
-          await this.editArticulo(this.editedItem)
-        } else {
-          await this.createArticulo(this.editedItem)
-        }
-        this.close()
-      },
-      async createArticulo(item){
-        try{
-          item = {...item, categoria: this.articulo_categoria._id }
-          let data = await createArticulo(item)
-          this.pushArticulo(data.data)
-        }catch(error){
-          console.log(error)
-        }
-      },
-      async editArticulo(item){
-        try{
-          await editArticulo(item)
-          this.getArticulos()
-        }catch(error){
-          console.log(error)
-        }
-      }
     },
   }
 </script>
