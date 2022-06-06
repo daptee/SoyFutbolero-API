@@ -191,16 +191,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _this.editedItem = _objectSpread({}, item);
                 _this.editedItem.estado = 1;
                 delete _this.editedItem.tipo;
-                _context.next = 5;
+                _context.next = 4;
                 return _this.editTeam(_this.editedItem);
 
-              case 5:
+              case 4:
                 _this.closeDelete();
 
-              case 6:
+              case 5:
               case "end":
                 return _context.stop();
             }

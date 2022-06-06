@@ -21,10 +21,13 @@ export default new Vuex.Store({
         addTeam(state,payload){
             state.teams.push(payload)
         },
-        updateTeam(state,payload){
-            index = state.teams.find(team => team.id == payload.id)
-            state.teams[index] = {...payload}
-        }
+        setStadium(state, payload) {
+            state.stadium.length = 0
+            state.stadium = payload
+        },
+        addStadium(state,payload){
+            state.stadium.push(payload)
+        },
     },
     actions: {
         async getTeams({ commit }){
@@ -44,6 +47,27 @@ export default new Vuex.Store({
             try{
                 let data = await axios.put("/api/teams/"+payload.id, payload)
                 this.dispatch('getTeams')
+            }catch(error){
+
+            }
+        },
+        async getStadium({ commit }){
+            let data = await axios.get("/api/stadium")
+            commit('setStadium', data.data.data)
+          },
+        async createStadium({ commit },payload){
+            try{
+                let data = await axios.post("/api/stadium",payload)
+
+                commit('addStadium', data.data.data)
+            }catch(error){
+
+            }
+        },
+        async editStadium({ commit },payload){
+            try{
+                let data = await axios.put("/api/stadium/"+payload.id, payload)
+                this.dispatch('getStadium')
             }catch(error){
 
             }

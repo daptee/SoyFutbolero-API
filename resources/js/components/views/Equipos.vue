@@ -149,7 +149,7 @@ export default {
             this.dialogDelete = true
         },
         async habilitar(item){
-            this.editedItem = {...item}
+
             this.editedItem.estado = 1
             delete this.editedItem.tipo
             await this.editTeam(this.editedItem)
