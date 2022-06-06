@@ -19,3 +19,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('login','App\Http\Controllers\Auth\LoginController@apiLogin');
+
+Route::prefix('stadium')->group(function () {
+    Route::get('/','App\Http\Controllers\StadiumController@list');
+    Route::get('/{id}','App\Http\Controllers\StadiumController@getById');
+    Route::post('','App\Http\Controllers\StadiumController@create');
+    Route::put('/{id}','App\Http\Controllers\StadiumController@update');
+});
+
+Route::prefix('teams')->group(function () {
+    Route::get('/','App\Http\Controllers\TeamController@list');
+    Route::get('/{id}','App\Http\Controllers\TeamController@getById');
+    Route::post('/','App\Http\Controllers\TeamController@create');
+    Route::put('/{id}','App\Http\Controllers\TeamController@update');
+});
+
+
