@@ -149,21 +149,17 @@ export default {
             this.dialogDelete = true
         },
         async habilitar(item){
-            try{
-            await activateArticulo(item)
-            this.getArticulos()
-            }catch(error){
-            console.log(error)
-            }
+            this.editedItem = {...item}
+            this.editedItem.estado = 1
+            delete this.editedItem.tipo
+            await this.editTeam(this.editedItem)
+            this.closeDelete()
         },
         async deleteItemConfirm() {
-            try{
-            await deactivateArticulo(this.editedItem)
-            this.getArticulos()
+            this.editedItem.estado = 0
+            delete this.editedItem.tipo
+            await this.editTeam(this.editedItem)
             this.closeDelete()
-            }catch(error){
-            console.log(error)
-            }
         },
         close () {
             this.dialog = false

@@ -191,27 +191,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.prev = 0;
-                _context.next = 3;
-                return activateArticulo(item);
+                _this.editedItem = _objectSpread({}, item);
+                _this.editedItem.estado = 1;
+                delete _this.editedItem.tipo;
+                _context.next = 5;
+                return _this.editTeam(_this.editedItem);
 
-              case 3:
-                _this.getArticulos();
-
-                _context.next = 9;
-                break;
+              case 5:
+                _this.closeDelete();
 
               case 6:
-                _context.prev = 6;
-                _context.t0 = _context["catch"](0);
-                console.log(_context.t0);
-
-              case 9:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[0, 6]]);
+        }, _callee);
       }))();
     },
     deleteItemConfirm: function deleteItemConfirm() {
@@ -222,29 +216,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.prev = 0;
-                _context2.next = 3;
-                return deactivateArticulo(_this2.editedItem);
+                _this2.editedItem.estado = 0;
+                delete _this2.editedItem.tipo;
+                _context2.next = 4;
+                return _this2.editTeam(_this2.editedItem);
 
-              case 3:
-                _this2.getArticulos();
-
+              case 4:
                 _this2.closeDelete();
 
-                _context2.next = 10;
-                break;
-
-              case 7:
-                _context2.prev = 7;
-                _context2.t0 = _context2["catch"](0);
-                console.log(_context2.t0);
-
-              case 10:
+              case 5:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, null, [[0, 7]]);
+        }, _callee2);
       }))();
     },
     close: function close() {
