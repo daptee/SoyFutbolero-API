@@ -72,11 +72,6 @@ class LoginController extends Controller
             return response()->json(['message' => 'Usuario y/o clave no válidos.'], 400);
 
         return $this->respondWithToken($token);
-
-        return response()->json([
-            'mensaje' => $token,
-            'clave ' => bcrypt('123123')
-        ]);
     }
 
     public function logout(){
