@@ -34,6 +34,8 @@ Vue.component('login', require('./components/views/Login.vue').default);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+axios.defaults.headers.common['authorization'] = localStorage.token ? localStorage.token : null
+
 const app = new Vue({
     el: '#app',
     router,

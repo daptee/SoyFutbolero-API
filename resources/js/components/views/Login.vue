@@ -10,13 +10,13 @@
                      </v-toolbar>
                      <v-card-text>
                         <v-form>
-                           <v-text-field prepend-icon="mdi-account" name="login" label="Login" type="text"></v-text-field>
-                           <v-text-field id="password" prepend-icon="mdi-lock" name="password" label="Password" type="password"></v-text-field>
+                           <v-text-field v-model="username" prepend-icon="mdi-account" name="login" label="Login" type="text"></v-text-field>
+                           <v-text-field v-model="password" id="password" prepend-icon="mdi-lock" name="password" label="Password" type="password"></v-text-field>
                         </v-form>
                      </v-card-text>
                      <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="primary" to="/">Login</v-btn>
+                        <v-btn color="primary" @click="login()">Login</v-btn>
                      </v-card-actions>
                   </v-card>
                </v-flex>
@@ -27,7 +27,49 @@
 </template>
 
 <script>
-export default {
+import { mapState, mapActions } from 'vuex'
+import decodeError from '../../Helpers/errorDecode'
 
-}
+export default {
+    data: () => ({
+        username: '',
+        password: '',
+
+    }),
+    created () {
+
+    },
+    computed: {
+
+    },
+    methods: {
+        async login(){
+            try{
+                // if (this.username == '' || this.password == '') {
+                //     return
+                // }
+
+                let auth = {
+                    usuario: this.username,
+                    password: this.password
+                }
+                //this.$session.start()
+
+                var response = await axios.post("/api/login",auth)
+                let token = response.data.token_type + ' ' + response.data.access_token
+
+                //this.$session.set('token', token)
+                localStorage.token = token
+                window.location.href  = '/'
+
+            }catch(error){
+
+                return decodeError.decodeError(error.response.data)
+            }
+        }
+    },
+    watch: {
+
+    },
+  }
 </script>
