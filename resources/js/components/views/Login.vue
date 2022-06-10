@@ -53,12 +53,10 @@ export default {
                     usuario: this.username,
                     password: this.password
                 }
-                //this.$session.start()
 
                 var response = await axios.post("/api/login",auth)
                 let token = response.data.token_type + ' ' + response.data.access_token
 
-                //this.$session.set('token', token)
                 localStorage.token = token
                 window.location.href  = '/'
 

@@ -68,16 +68,16 @@ class LoginController extends Controller
     public function apiLogin(Request $request){
         $credentials = $request->only('usuario', 'password');
 
-        if (! $token = JWTAuth::attempt($credentials))
+        if (! $token = auth()->attempt($credentials))
             return response()->json(['message' => 'Usuario y/o clave no válidos.'], 400);
 
         return $this->respondWithToken($token);
     }
 
     public function logout(){
-        Auth::logout();
+        auth()->logout();
 
-        return redirect()->route('welcome');
+        return response()->json(['message' => 'Successfully logged out']);
     }
 
     public function username()
