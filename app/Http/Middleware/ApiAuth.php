@@ -16,18 +16,18 @@ class ApiAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!auth()->user() && !$request->ajax() ) {
-            return redirect()->route('login');
-        }
+        // if (!auth()->user() && !$request->ajax() ) {
+        //     return redirect()->route('login');
+        // }
 
-        if ($request->ajax()){
+        // if ($request->ajax()){
             if ($request->bearerToken()) {
                 return $next($request);
             }
             return response()->json([
                 'redirect' => '/login'
             ],400);
-        }
+        // }
 
 
     }

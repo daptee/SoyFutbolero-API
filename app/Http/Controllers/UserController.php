@@ -55,9 +55,9 @@ class UserController extends Controller
 
             $data['password'] = $data['is_admin'] == 1 ? bcrypt($data['password']) : md5($data['password']);
 
-            User::create($data);
+            $user = User::create($data);
 
-            $user = User::where('id',$id)->with(['genero'])->first();
+            $user = User::where('id',$user->id)->with(['genero'])->first();
 
             return response()->json([
                 'message' => 'Usuario creado con exito.',

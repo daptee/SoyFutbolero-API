@@ -35,10 +35,10 @@ Route::prefix('teams')->group(function () {
 });
 
 Route::prefix('user')->group(function () {
-    Route::get('/','App\Http\Controllers\UserController@list');
-    Route::get('/{id}','App\Http\Controllers\UserController@getById');
-    Route::post('/','App\Http\Controllers\UserController@create');
-    Route::put('/{id}','App\Http\Controllers\UserController@update');
+    Route::get('/','App\Http\Controllers\UserController@list')->middleware('api-auth');
+    Route::get('/{id}','App\Http\Controllers\UserController@getById')->middleware('api-auth');
+    Route::post('/','App\Http\Controllers\UserController@create')->middleware('api-auth');
+    Route::put('/{id}','App\Http\Controllers\UserController@update')->middleware('api-auth');
 });
 
 
