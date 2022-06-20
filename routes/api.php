@@ -41,4 +41,12 @@ Route::prefix('user')->group(function () {
     Route::put('/{id}','App\Http\Controllers\UserController@update')->middleware('api-auth');
 });
 
+Route::prefix('turnament')->group(function () {
+    Route::get('/','App\Http\Controllers\TurnamentController@list');
+    Route::get('/{id}','App\Http\Controllers\TurnamentController@getById');
+    Route::post('/','App\Http\Controllers\TurnamentController@create')->middleware('api-auth');
+    Route::put('/{id}','App\Http\Controllers\TurnamentController@update');
+    Route::delete('/{id}','App\Http\Controllers\TurnamentController@delete');
+});
+
 
