@@ -49,4 +49,9 @@ Route::prefix('turnament')->group(function () {
     Route::delete('/{id}','App\Http\Controllers\TurnamentController@delete');
 });
 
+Route::prefix('stage')->group(function () {
+    Route::get('/','App\Http\Controllers\StageController@list');
+});
+
+
 

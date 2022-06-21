@@ -25,4 +25,8 @@ class Turnament extends Model
         return $this->BelongsTo(TurnamentType::class,'id_tipo_torneo');
     }
 
+    public function torneoFase(){
+        return $this->hasMany(TurnamentStage::class,'id_torneo','id');
+    }
+
 }

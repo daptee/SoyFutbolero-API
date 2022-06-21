@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use  App\Models\Turnament;
+use  App\Models\{
+    Turnament,
+    TurnamentStage
+};
 use Carbon\Carbon;
 use App\Services\JwtService;
 
@@ -38,7 +41,13 @@ class TurnamentController extends Controller
             $tournament->estado = $tournament->estado;
             $tournament->tipo = $tournament->tipo;
 
+            #Crear Fase
+            foreach ($data['stages'] as $stage) {
+                $stage['id_torneo'] = $tournament->id;
+                TurnamentStage::create($stage);
+            }
 
+            $tournament = Turnament::whereId($tournament->id)->with(['torneoFase','torneoFase.fase','estado','tipo'])->first();
 
             return response()->json([
                 'data' => $tournament
