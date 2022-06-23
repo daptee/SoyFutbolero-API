@@ -15,8 +15,13 @@ class TurnamentController extends Controller
 {
     public function list(){
         try{
-            $turnaments = Turnament::with(['tipo','estado'])->get();
+            $turnaments = Turnament::with(['torneoFase','torneoFase.fase','estado','tipo'])->get();
 
+            if($turnaments->count() == 0){
+                return response()->json([
+                    'message' => 'No se encontraron torneos.',
+                ],404);
+            }
 
             return response()->json([
                 'data' => $turnaments
