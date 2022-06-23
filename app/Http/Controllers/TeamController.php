@@ -26,6 +26,12 @@ class TeamController extends Controller
         try{
             $team = Team::whereId($id)->with('tipo')->first();
 
+            if(is_null($team)){
+                return response()->json([
+                    'message' => 'No se encontro equipos con el Id: '.$id,
+                ],404);
+            }
+
             return response()->json([
                 'message' => 'Equipo devuelto con exito.',
                 'data' => $team
