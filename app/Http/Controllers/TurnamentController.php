@@ -62,29 +62,17 @@ class TurnamentController extends Controller
             $data['turnament']['fecha_crea'] = date('Y-m-d');
             $data['turnament']['hora_crea'] = date('H:i:s');
             $data['turnament']['user_crea'] = JwtService::getUser()->id;
+            $data['turnament']['id_estado'] = 1;
 
             $tournament = Turnament::create($data['turnament']);
             $tournament->estado = $tournament->estado;
             $tournament->tipo = $tournament->tipo;
 
             #Crear Fase
-            foreach ($data['stages'] as $stage) {
+            foreach ($data['stages'] as $stage_id) {
                 $stage['id_torneo'] = $tournament->id;
+                $stage['id_fase'] = $stage_id;
                 TurnamentStage::create($stage);
-            }
-
-            #Crear Grupos
-            if ($request->has('groups')) {
-                $i = $data['groups']['is_num'] ? 0 : 65;
-                $count = $data['groups']['is_num'] ? $data['groups']['count'] - 1 : 64 + $data['groups']['count'];
-
-                for($i; $i<= $count; $i++) {
-                    $group = $data['groups']['is_num'] ? $i + 1 : chr($i);
-                    TournamentGroups::create([
-                        'id_torneo' => $tournament->id,
-                        'grupo' => $group
-                    ]);
-                }
             }
 
             $tournament = Turnament::whereId($tournament->id)->with(['torneoFase','torneoFase.fase','estado','tipo'])->first();
@@ -122,19 +110,18 @@ class TurnamentController extends Controller
                 ], $tournament_data);
             }
 
-            $stages = $request->filled('stages') ? $request->stages : null;
-            if (!is_null($stages)) {
-                $ids_stages = collect($stages)->pluck('id_fase');
+            $stages_ids = $request->filled('stages') ? $request->stages : null;
+            if (!is_null($stages_ids)) {
                 #Agrego Los stages nuevos
-                foreach ($ids_stages as $id_stage) {
-                    if(!TurnamentStage::where('id_fase',$id_stage)->exists())
+                foreach ($stages_ids as $stage_id) {
+                    if(!TurnamentStage::where('id_fase',$stage_id)->where('id_torneo', $id)->exists())
                         TurnamentStage::create([
                             'id_torneo' => $id,
-                            'id_fase' => $id_stage
+                            'id_fase' => $stage_id
                         ]);
                 }
                 # Elimino los que corresponden
-                $id_destroy = TurnamentStage::where('id_torneo',$id)->whereNotIn('id_fase',$ids_stages)->pluck('id');
+                $id_destroy = TurnamentStage::where('id_torneo',$id)->whereNotIn('id_fase',$stages_ids)->pluck('id');
                 if (count($id_destroy) > 0) {
                     foreach($id_destroy as $ids) {
                         TurnamentStage::destroy($ids);
@@ -146,6 +133,38 @@ class TurnamentController extends Controller
 
             return response()->json([
                 'message' => 'Torneo N: '.$id.' modificado con éxito',
+                'data' => $tournament
+            ]);
+        }catch (Exception $error){
+            return response()->json([
+                'message' => $error->getMessage()
+            ],500);
+        }
+    }
+
+    public function changeState(Request $request){
+        try{
+            if (!$request->has(['id','id_estado'])){
+                return response()->json([
+                    'message' => "Id de Torneo no encontrado."
+                ],400);
+            }
+
+            $tournament = Turnament::whereId($request->id)->first();
+
+            if (is_null($tournament) || ($request->id_estado == 2 && $tournament->id_estado != 1) ||
+            ($request->id_estado == 3 && $tournament->id_estado != 2)) {
+                return response()->json([
+                    'message' => "No se encontro el torneo: ". $request->id
+                ],404);
+            }
+            $tournament->id_estado = $request->id_estado;
+            $tournament->save();
+            $tournament = Turnament::whereId($tournament->id)->with(['torneoFase','torneoFase.fase','estado','tipo'])->first();
+
+            $state = $request->id == 2 ? 'iniciado' : 'finalizado';
+            return response()->json([
+                "message" => "Torneo $state con éxito.",
                 'data' => $tournament
             ]);
         }catch (Exception $error){
