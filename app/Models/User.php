@@ -42,6 +42,10 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'id_genero',
+        'email_verified_at',
+        'created_at',
+        'updated_at'
     ];
 
     /**
@@ -71,6 +75,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function genero(){
+        return $this->belongsTo(UsuarioGenero::class,'id_genero');
     }
 
 }
