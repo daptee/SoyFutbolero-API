@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import decodeError from '../Helpers/errorDecode'
 
 Vue.use(Vuex)
 
@@ -31,8 +32,12 @@ export default new Vuex.Store({
     },
     actions: {
         async getTeams({ commit }){
-            let data = await axios.get("/api/teams")
-            commit('setTeams', data.data.data)
+            try {
+                let data = await axios.get("/api/teams")
+                commit('setTeams', data.data.data)
+            } catch (error) {
+                decodeError.decodeError(error.response.data)
+            }
           },
         async createTeam({ commit },payload){
             try{
@@ -40,7 +45,7 @@ export default new Vuex.Store({
 
                 commit('addTeam', data.data.data)
             }catch(error){
-
+                decodeError.decodeError(error.response.data)
             }
         },
         async editTeam({ commit },payload){
@@ -48,12 +53,17 @@ export default new Vuex.Store({
                 let data = await axios.put("/api/teams/"+payload.id, payload)
                 this.dispatch('getTeams')
             }catch(error){
-
+                decodeError.decodeError(error.response.data)
             }
         },
         async getStadium({ commit }){
-            let data = await axios.get("/api/stadium")
-            commit('setStadium', data.data.data)
+            try {
+                let data = await axios.get("/api/stadium")
+                commit('setStadium', data.data.data)
+            } catch(error) {
+                decodeError.decodeError(error.response.data)
+            }
+
           },
         async createStadium({ commit },payload){
             try{
@@ -61,7 +71,7 @@ export default new Vuex.Store({
 
                 commit('addStadium', data.data.data)
             }catch(error){
-
+                decodeError.decodeError(error.response.data)
             }
         },
         async editStadium({ commit },payload){
@@ -69,7 +79,7 @@ export default new Vuex.Store({
                 let data = await axios.put("/api/stadium/"+payload.id, payload)
                 this.dispatch('getStadium')
             }catch(error){
-
+                decodeError.decodeError(error.response.data)
             }
         }
     },

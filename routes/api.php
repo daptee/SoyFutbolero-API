@@ -14,24 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/user', function (Request $request) {
+    return auth()->user();
 });
 
 Route::post('login','App\Http\Controllers\Auth\LoginController@apiLogin');
 
 Route::prefix('stadium')->group(function () {
-    Route::get('/','App\Http\Controllers\StadiumController@list');
-    Route::get('/{id}','App\Http\Controllers\StadiumController@getById');
-    Route::post('','App\Http\Controllers\StadiumController@create');
-    Route::put('/{id}','App\Http\Controllers\StadiumController@update');
+    Route::get('/','App\Http\Controllers\StadiumController@list')->middleware('api-auth');
+    Route::get('/{id}','App\Http\Controllers\StadiumController@getById')->middleware('api-auth');
+    Route::post('','App\Http\Controllers\StadiumController@create')->middleware('api-auth');
+    Route::put('/{id}','App\Http\Controllers\StadiumController@update')->middleware('api-auth');
 });
 
 Route::prefix('teams')->group(function () {
-    Route::get('/','App\Http\Controllers\TeamController@list');
-    Route::get('/{id}','App\Http\Controllers\TeamController@getById');
-    Route::post('/','App\Http\Controllers\TeamController@create');
-    Route::put('/{id}','App\Http\Controllers\TeamController@update');
-});
+    Route::get('/','App\Http\Controllers\TeamController@list')->middleware('api-auth');
+    Route::get('/{id}','App\Http\Controllers\TeamController@getById')->middleware('api-auth');
+    Route::post('/','App\Http\Controllers\TeamController@create')->middleware('api-auth');
+    Route::put('/{id}','App\Http\Controllers\TeamController@update')->middleware('api-auth');});
 
 

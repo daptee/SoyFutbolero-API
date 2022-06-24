@@ -792,7 +792,7 @@ var render = function () {
                           "v-btn",
                           {
                             attrs: { color: "primary" },
-                            on: { click: _vm.getCategories },
+                            on: { click: _vm.getTeams },
                           },
                           [
                             _vm._v(

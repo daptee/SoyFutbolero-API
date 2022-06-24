@@ -75,7 +75,7 @@
                     </v-icon>
                     </template>
                     <template v-slot:no-data>
-                    <v-btn color="primary" @click="getCategories">
+                    <v-btn color="primary" @click="getTeams">
                         Recargar
                     </v-btn>
                     </template>

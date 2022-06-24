@@ -4,9 +4,17 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
+//   {
+//     path: '/users',
+//     name: 'Usuario',
+//     meta: {
+//       allowAllUsers: true
+//     },
+//     component: () => import('../components/views/Login.vue')
+//   },
   {
-    path: '/users',
-    name: 'Usuario',
+    path: '/login',
+    name: 'Login',
     meta: {
       allowAllUsers: true
     },
@@ -35,5 +43,19 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+function existToken() {
+    return !!localStorage.token;
+}
+
+router.beforeEach((to, from, next) => {
+    if (to.path != '/login' && existToken()) {
+        next();
+    } else if (to.path == '/login' && existToken()){
+        next('/');
+    } else {
+        next('login');
+    }
+});
 
 export default router
