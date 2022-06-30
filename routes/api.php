@@ -62,4 +62,12 @@ Route::prefix('turnament-type')->group(function () {
     Route::get('/','App\Http\Controllers\TournamentTypeController@list');
 });
 
+Route::prefix('group')->group(function () {
+    Route::get('/','App\Http\Controllers\GroupController@list');
+    Route::get('/{id}','App\Http\Controllers\GroupController@getById');
+    Route::post('/','App\Http\Controllers\GroupController@create');
+    Route::put('/{id}','App\Http\Controllers\GroupController@update');
+    Route::delete('/{id}','App\Http\Controllers\GroupController@delete');
+});
+
 
