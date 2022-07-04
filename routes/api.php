@@ -62,6 +62,8 @@ Route::prefix('turnament-type')->group(function () {
     Route::get('/','App\Http\Controllers\TournamentTypeController@list');
 });
 
+Route::get('/turnament-group','App\Http\Controllers\TurnamentController@listWithGroup');
+
 Route::prefix('group')->group(function () {
     Route::get('/','App\Http\Controllers\GroupController@list');
     Route::get('/{id}','App\Http\Controllers\GroupController@getById');

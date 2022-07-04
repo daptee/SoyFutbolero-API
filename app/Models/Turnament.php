@@ -30,7 +30,7 @@ class Turnament extends Model
     }
 
     public function torneoGrupos(){
-        return $this->hasMany(TournamentGroups::class,'id_torneo','id');
+        return $this->hasMany(TournamentGroups::class,'id_torneo','id')->with('teams');
     }
 
 }
