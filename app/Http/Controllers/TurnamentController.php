@@ -173,4 +173,24 @@ class TurnamentController extends Controller
             ],500);
         }
     }
+
+    public function listWithGroup(){
+        try{
+            $turnaments = Turnament::with(['torneoGrupos','estado'])->get();
+
+            if($turnaments->count() == 0){
+                return response()->json([
+                    'message' => 'No se encontraron torneos.',
+                ],404);
+            }
+
+            return response()->json([
+                'data' => $turnaments
+            ]);
+        } catch (Exception $error) {
+            return response()->json([
+                'message' => $error->getMessage()
+            ]);
+        }
+    }
 }
