@@ -48,6 +48,8 @@ class User extends Authenticatable implements JWTSubject
         'updated_at'
     ];
 
+    public $timestamps = false;
+
     /**
      * The attributes that should be cast.
      *
