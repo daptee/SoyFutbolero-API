@@ -24,6 +24,7 @@ class TurnamentController extends Controller
             }
 
             return response()->json([
+                'message' => 'Torneos devueltos con exitos.',
                 'data' => $turnaments
             ]);
         } catch (Exception $error) {
@@ -78,6 +79,7 @@ class TurnamentController extends Controller
             $tournament = Turnament::whereId($tournament->id)->with(['torneoFase','torneoFase.fase','estado','tipo'])->first();
 
             return response()->json([
+                'message' => 'Torneo creado con exitos.',
                 'data' => $tournament
             ]);
         }catch (Exception $error){
@@ -185,6 +187,7 @@ class TurnamentController extends Controller
             }
 
             return response()->json([
+                'message' => 'Grupos devueltos con exito.',
                 'data' => $turnaments
             ]);
         } catch (Exception $error) {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TournamentGroups;
 use App\Models\TournamentTeam;
+use App\Models\TurnamentStage;
 use App\Models\Turnament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -122,8 +123,13 @@ class GroupController extends Controller
 
                 }
 
+                $ids_teams_destroy = TournamentTeam::where('id_grupo', $tournament_group->id)->whereNotIn('id_equipo',$teams_ids)->pluck('id');
                 # Elimino equipos no esten
-                $this->_deletetTeams($tournament_group->id, $teams_ids);
+                if (count($ids_teams_destroy) > 0) {
+                    foreach ($ids_teams_destroy as $ids) {
+                        TournamentTeam::destroy($ids);
+                    }
+                }
 
                 $groups_ids[] = $tournament_group->id;
             }
@@ -132,7 +138,13 @@ class GroupController extends Controller
             if (count($id_destroy) > 0) {
                 foreach ($id_destroy as $ids) {
                     if (TournamentTeam::where('id_grupo', $ids)->exists() ) {
-                        $this->_deletetTeams($tournament_group->id, $teams_ids, true);
+                            $ids_teams_destroy = TournamentTeam::where('id_grupo', $ids)->pluck('id');
+                            # Elimino equipos no esten
+                            if (count($ids_teams_destroy) > 0) {
+                                foreach ($ids_teams_destroy as $id_team) {
+                                    TournamentTeam::destroy($id_team);
+                                }
+                            }
                     }
                     TournamentGroups::destroy($ids);
                 }
@@ -155,10 +167,10 @@ class GroupController extends Controller
         $query = TournamentTeam::where('id_grupo', $id_grupo);
 
         $id_destroy = $in_group ? $query->whereIn('id_equipo', $teams_id)->pluck('id') : $query->whereNotIn('id_equipo', $teams_id)->pluck('id');
-        $id_destroy = TournamentTeam::where('id_grupo', $id_grupo)->whereNotIn('id_equipo', $teams_id)->pluck('id');
+        $id_destroy = $query->pluck('id');
         if (count($id_destroy) > 0) {
             foreach ($id_destroy as $ids) {
-                TurnamentStage::destroy($ids);
+                TournamentTeam::destroy($ids);
             }
         }
     }
