@@ -33,4 +33,8 @@ class Turnament extends Model
         return $this->hasMany(TournamentGroups::class,'id_torneo','id')->with('teams');
     }
 
+    public function partidos(){
+        return $this->hasMany(Match::class);
+    }
+
 }

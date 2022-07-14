@@ -42,34 +42,41 @@ Route::prefix('user')->group(function () {
 });
 
 Route::prefix('turnament')->group(function () {
-    Route::get('/','App\Http\Controllers\TurnamentController@list');
-    Route::get('/{id}','App\Http\Controllers\TurnamentController@getById');
+    Route::get('/','App\Http\Controllers\TurnamentController@list')->middleware('api-auth');
+    Route::get('/{id}','App\Http\Controllers\TurnamentController@getById')->middleware('api-auth');
     Route::post('/','App\Http\Controllers\TurnamentController@create')->middleware('api-auth');
-    Route::put('/{id}','App\Http\Controllers\TurnamentController@update');
-    Route::delete('/{id}','App\Http\Controllers\TurnamentController@delete');
+    Route::put('/{id}','App\Http\Controllers\TurnamentController@update')->middleware('api-auth');
+    Route::delete('/{id}','App\Http\Controllers\TurnamentController@delete')->middleware('api-auth');
     Route::post('/change-state','App\Http\Controllers\TurnamentController@changeState')->middleware('api-auth');
 });
 
 Route::prefix('stage')->group(function () {
-    Route::get('/','App\Http\Controllers\StageController@list');
+    Route::get('/','App\Http\Controllers\StageController@list')->middleware('api-auth');
 });
 
 Route::prefix('turnament-state')->group(function () {
-    Route::get('/','App\Http\Controllers\TournamentStateController@list');
+    Route::get('/','App\Http\Controllers\TournamentStateController@list')->middleware('api-auth');
 });
 
 Route::prefix('turnament-type')->group(function () {
-    Route::get('/','App\Http\Controllers\TournamentTypeController@list');
+    Route::get('/','App\Http\Controllers\TournamentTypeController@list')->middleware('api-auth');
 });
 
-Route::get('/turnament-group','App\Http\Controllers\TurnamentController@listWithGroup');
+Route::get('/turnament-group','App\Http\Controllers\TurnamentController@listWithGroup')->middleware('api-auth');
 
 Route::prefix('group')->group(function () {
-    Route::get('/','App\Http\Controllers\GroupController@list');
-    Route::get('/{id}','App\Http\Controllers\GroupController@getById');
-    Route::post('/','App\Http\Controllers\GroupController@create');
-    Route::put('/{id}','App\Http\Controllers\GroupController@update');
-    Route::delete('/{id}','App\Http\Controllers\GroupController@delete');
+    Route::get('/','App\Http\Controllers\GroupController@list')->middleware('api-auth');
+    Route::get('/{id}','App\Http\Controllers\GroupController@getById')->middleware('api-auth');
+    Route::post('/','App\Http\Controllers\GroupController@create')->middleware('api-auth');
+    Route::put('/{id}','App\Http\Controllers\GroupController@update')->middleware('api-auth');
+    Route::delete('/{id}','App\Http\Controllers\GroupController@delete')->middleware('api-auth');
+});
+
+Route::prefix('match')->group(function () {
+    Route::get('/torrnament','App\Http\Controllers\MatchController@list')->middleware('api-auth');
+    Route::get('/torrnament/{tournament_id}','App\Http\Controllers\MatchController@tournamentMatchsById')->middleware('api-auth');
+    Route::post('/','App\Http\Controllers\MatchController@create')->middleware('api-auth');
+    Route::put('/{id}','App\Http\Controllers\MatchController@update')->middleware('api-auth');
 });
 
 

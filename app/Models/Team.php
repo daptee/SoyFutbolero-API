@@ -27,4 +27,12 @@ class Team extends Model
 
         return $this->belongsTo(EquipoTipo::class,'id_tipo');
     }
+
+    public function partidos_local(){
+        return $this->hasMany(Match::class);
+    }
+
+    public function partidos_visitante(){
+        return $this->hasMany(Match::class);
+    }
 }

@@ -21,4 +21,8 @@ class Stadium extends Model
 
         return $this->belongsTo(Team::class,'id_equipo');
     }
+
+    public function partidos(){
+        return $this->hasMany(Match::class);
+    }
 }
