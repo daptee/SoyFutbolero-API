@@ -13,6 +13,9 @@ class StageController extends Controller
         try{
             $stages = Stage::with(['tipoFase','tipoPartido'])->get();
 
+            foreach( $stages as $stage){
+                $stage->nombre = $stage->tipoFase->tipo .' - ' . $stage->tipoPartido->partido;
+            }
 
             return response()->json([
                 'data' => $stages
