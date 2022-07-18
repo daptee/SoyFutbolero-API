@@ -21,4 +21,9 @@ class Stage extends Model
     public function tipoPartido(){
         return $this->belongsTo(TypeMatch::class ,'id_tipo_partido');
     }
+
+    public function partidos(){
+        return $this->hasMany(Match::class);
+    }
+
 }

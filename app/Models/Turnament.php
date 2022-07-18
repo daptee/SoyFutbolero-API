@@ -26,11 +26,15 @@ class Turnament extends Model
     }
 
     public function torneoFase(){
-        return $this->hasMany(TurnamentStage::class,'id_torneo','id');
+        return $this->hasMany(TurnamentStage::class,'id_torneo','id')->with('fase');
     }
 
     public function torneoGrupos(){
         return $this->hasMany(TournamentGroups::class,'id_torneo','id')->with('teams');
+    }
+
+    public function partidos(){
+        return $this->hasMany(Match::class);
     }
 
 }
