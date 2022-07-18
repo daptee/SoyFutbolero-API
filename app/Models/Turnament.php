@@ -26,7 +26,7 @@ class Turnament extends Model
     }
 
     public function torneoFase(){
-        return $this->hasMany(TurnamentStage::class,'id_torneo','id');
+        return $this->hasMany(TurnamentStage::class,'id_torneo','id')->with('fase');
     }
 
     public function torneoGrupos(){

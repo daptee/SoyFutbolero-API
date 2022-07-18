@@ -48,6 +48,8 @@ Route::prefix('turnament')->group(function () {
     Route::put('/{id}','App\Http\Controllers\TurnamentController@update')->middleware('api-auth');
     Route::delete('/{id}','App\Http\Controllers\TurnamentController@delete')->middleware('api-auth');
     Route::post('/change-state','App\Http\Controllers\TurnamentController@changeState')->middleware('api-auth');
+    Route::get('/stage/{id}','App\Http\Controllers\TurnamentController@getTournamentStages')->middleware('api-auth');
+    Route::get('/team/{id}','App\Http\Controllers\TurnamentController@getTournamentTeams')->middleware('api-auth');
 });
 
 Route::prefix('stage')->group(function () {

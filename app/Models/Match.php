@@ -64,4 +64,8 @@ class Match extends Model
     public function equipo_visitante(){
         return $this->belongsTo(Team::class, 'id_equipo_2');
     }
+
+    public function estado(){
+        return $this->belongsTo(PartidoEstados::class, 'id_estado');
+    }
 }

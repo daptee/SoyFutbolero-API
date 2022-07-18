@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use  App\Models\{
     Turnament,
     TournamentGroups,
-    TurnamentStage
+    TurnamentStage,
+    TournamentTeam
 };
 use Carbon\Carbon;
 use App\Services\JwtService;
@@ -193,7 +194,58 @@ class TurnamentController extends Controller
         } catch (Exception $error) {
             return response()->json([
                 'message' => $error->getMessage()
-            ]);
+            ],500);
+        }
+    }
+
+    public function getTournamentStages($id){
+        try{
+            $turnaments = TurnamentStage::where('id_torneo',$id )
+            ->with(['fase'])->get();
+
+            if ($turnaments->count() == 0 ) {
+                return response()->json([
+                    'message' => "No se encontraron Fases para el Torneo: ". $id
+                ],404);
+            }
+
+            foreach ($turnaments as $stage){
+                $stage->id_stage = $stage->fase->id;
+                $stage->nombre = $stage->fase->tipoFase->tipo . ' - ' . $stage->fase->tipoPartido->partido;
+            }
+
+            return $turnaments;
+        }catch (Exception $error){
+            return response()->json([
+                'message' => $error->getMessage()
+            ],500);
+        }
+    }
+
+    public function getTournamentTeams($id){
+        try{
+            $tournament_teams = TournamentTeam::whereHas('group', function ($query) use ($id) {
+                $query->where('id_torneo',  $id);
+            })
+            ->with(['team'])->get();
+
+            if ($tournament_teams->count() == 0 ) {
+                return response()->json([
+                    'message' => "No se encontraron equipos para el Torneo: ". $id
+                ],404);
+            }
+
+            $teams = [];
+            foreach ($tournament_teams as $team){
+                $teams[] = $team->team;
+            }
+
+
+            return $teams;
+        }catch (Exception $error){
+            return response()->json([
+                'message' => $error->getMessage()
+            ],500);
         }
     }
 }
