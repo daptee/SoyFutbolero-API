@@ -164,7 +164,7 @@ class MatchController extends Controller
                 'id_equipo_1' => $data['id_equipo_1'],
                 'id_equipo_2' => $data['id_equipo_2'],
                 'goles_1' => $data['goles_1'],
-                'goles_1' => $data['goles_1'],
+                'goles_2' => $data['goles_2'],
                 'penales_1' => $data['penales_1'],
                 'penales_2' => $data['penales_2'],
                 'fecha' => $data['fecha'],
