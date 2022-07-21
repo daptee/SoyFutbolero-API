@@ -31,7 +31,7 @@ Route::prefix('teams')->group(function () {
     Route::get('/','App\Http\Controllers\TeamController@list')->middleware('api-auth');
     Route::get('/{id}','App\Http\Controllers\TeamController@getById')->middleware('api-auth');
     Route::post('/','App\Http\Controllers\TeamController@create')->middleware('api-auth');
-    Route::put('/{id}','App\Http\Controllers\TeamController@update')->middleware('api-auth');
+    Route::post('/edit','App\Http\Controllers\TeamController@update')->middleware('api-auth');
 });
 
 Route::prefix('user')->group(function () {
