@@ -88,28 +88,40 @@ class TeamController extends Controller
     public function update(Request $request){
         try{
             $data = $request->all();
-            \Log::info(json_encode($data));
             $id = $data['id'];
+            $team_temp = Team::whereId($id)->first();
+
             $file_base_name = strtolower(str_replace(" ", "_", trim($data['nombre'])));
             $path = 'teams/'. $id;
+
             if ($request->hasFile('escudo')) {
-                $file_escudo    = $request->bandera;
+                if (Storage::disk('local')->exists($path.'/'.$team_temp->escudo)) {
+                    Storage::disk('local')->delete($path.'/'.$team_temp->escudo);
+                }
+
+                $file_escudo    = $request->escudo;
                 $escudo_name    = 'escudo_'.$file_base_name.'.'.$file_escudo->extension();
                 Storage::disk('local')->putFileAs($path, $file_escudo, $escudo_name);
                 $data['escudo'] = $escudo_name;
             }else{
-                if(isset($data['escudo']))
+                if(isset($data['escudo'])){
                     unset($data['escudo']);
+                }
             }
 
             if($request->hasFile('bandera')){
-                $file_bandera   = $request->escudo ;
+                if (Storage::disk('local')->exists($path.'/'.$team_temp->bandera)) {
+                    Storage::disk('local')->delete($path.'/'.$team_temp->bandera);
+                }
+
+                $file_bandera   = $request->bandera ;
                 $bandera_name   = 'bandera_'.$file_base_name.'.'.$file_bandera->extension();
                 Storage::disk('local')->putFileAs($path, $file_bandera, $bandera_name);
                 $data['bandera'] = $bandera_name;
             }else{
-                if(isset($data['bandera']))
+                if(isset($data['bandera'])){
                     unset($data['bandera']);
+                }
             }
 
             Team::whereId($id)
