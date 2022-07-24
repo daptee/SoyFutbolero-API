@@ -237,6 +237,7 @@ class TurnamentController extends Controller
 
             $teams = [];
             foreach ($tournament_teams as $team){
+                $team->team->grupo = 'Grupo '. $team->group->grupo;
                 $teams[] = $team->team;
             }
 
