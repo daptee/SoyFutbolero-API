@@ -37,4 +37,8 @@ class Turnament extends Model
         return $this->hasMany(Match::class);
     }
 
+    public function usuarios_torneo(){
+        return $this->hasMany(UserTournamet::class,'id_torneo','id')->with(['usuario','estado']);
+    }
+
 }

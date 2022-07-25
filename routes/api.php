@@ -82,3 +82,8 @@ Route::prefix('match')->group(function () {
 });
 
 
+Route::prefix('user-tournament')->group(function () {
+    Route::get('/','App\Http\Controllers\UserTournametController@list')->middleware('api-auth');
+    Route::post('','App\Http\Controllers\UserTournametController@create')->middleware('api-auth');
+    Route::put('/{id}','App\Http\Controllers\UserTournametController@update')->middleware('api-auth');
+});

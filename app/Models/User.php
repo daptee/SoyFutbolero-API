@@ -83,4 +83,8 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(UsuarioGenero::class,'id_genero');
     }
 
+    public function usuarios_torneo(){
+        return $this->hasMany(UserTournamet::class);
+    }
+
 }
