@@ -17,6 +17,10 @@ class UserController extends Controller
                 ],404);
             }
 
+            foreach($users as $user){
+                $user->nombre_completo = $user->apellido . ' '.$user->nombre;
+            }
+
             return response()->json([
                 'message' => 'Usuarios devueltos con exito.',
                 'data' => $users
