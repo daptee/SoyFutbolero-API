@@ -8,13 +8,20 @@ use Illuminate\Support\Facades\Storage;
 
 class TeamController extends Controller
 {
+    const PUBLIC_BASE_PATH = 'teams/';
+
     public function list() {
         try{
-            $team = Team::with('tipo')->get();
+            $teams = Team::with('tipo')->get();
+
+            foreach ($teams as $team){
+                $file_path = $team->tipo->id == 1 ? self::PUBLIC_BASE_PATH . $team->id . '/' . $team->escudo : self::PUBLIC_BASE_PATH . $team->id . '/' . $team->bandera;
+                $team->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+            }
 
             return response()->json([
                 'message' => 'Equipos devueltos con exito.',
-                'data' => $team
+                'data' => $teams
             ]);
         }catch(\Exception $e){
             return response()->json([
@@ -64,10 +71,10 @@ class TeamController extends Controller
             $path = 'teams/'. $team->id;
 
             if(!is_null($file_bandera)){
-                Storage::disk('local')->putFileAs($path, $file_bandera, $bandera_name);
+                Storage::disk('public')->putFileAs($path, $file_bandera, $bandera_name);
             }
             if(!is_null($file_escudo)){
-                Storage::disk('local')->putFileAs($path, $file_escudo, $escudo_name);
+                Storage::disk('public')->putFileAs($path, $file_escudo, $escudo_name);
             }
 
 
@@ -95,13 +102,13 @@ class TeamController extends Controller
             $path = 'teams/'. $id;
 
             if ($request->hasFile('escudo')) {
-                if (Storage::disk('local')->exists($path.'/'.$team_temp->escudo)) {
-                    Storage::disk('local')->delete($path.'/'.$team_temp->escudo);
+                if (Storage::disk('public')->exists($path.'/'.$team_temp->escudo)) {
+                    Storage::disk('public')->delete($path.'/'.$team_temp->escudo);
                 }
 
                 $file_escudo    = $request->escudo;
                 $escudo_name    = 'escudo_'.$file_base_name.'.'.$file_escudo->extension();
-                Storage::disk('local')->putFileAs($path, $file_escudo, $escudo_name);
+                Storage::disk('public')->putFileAs($path, $file_escudo, $escudo_name);
                 $data['escudo'] = $escudo_name;
             }else{
                 if(isset($data['escudo'])){
@@ -110,13 +117,13 @@ class TeamController extends Controller
             }
 
             if($request->hasFile('bandera')){
-                if (Storage::disk('local')->exists($path.'/'.$team_temp->bandera)) {
-                    Storage::disk('local')->delete($path.'/'.$team_temp->bandera);
+                if (Storage::disk('public')->exists($path.'/'.$team_temp->bandera)) {
+                    Storage::disk('public')->delete($path.'/'.$team_temp->bandera);
                 }
 
                 $file_bandera   = $request->bandera ;
                 $bandera_name   = 'bandera_'.$file_base_name.'.'.$file_bandera->extension();
-                Storage::disk('local')->putFileAs($path, $file_bandera, $bandera_name);
+                Storage::disk('public')->putFileAs($path, $file_bandera, $bandera_name);
                 $data['bandera'] = $bandera_name;
             }else{
                 if(isset($data['bandera'])){

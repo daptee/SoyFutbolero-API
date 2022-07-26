@@ -11,6 +11,7 @@ use  App\Models\{
 };
 use Carbon\Carbon;
 use App\Services\JwtService;
+use Illuminate\Support\Facades\Storage;
 
 class TurnamentController extends Controller
 {
@@ -66,7 +67,22 @@ class TurnamentController extends Controller
             $data['turnament']['user_crea'] = JwtService::getUser()->id;
             $data['turnament']['id_estado'] = 1;
 
+            # Agrego el archivo
+            $file_base_name = strtolower(str_replace(" ", "_", trim($data['turnament']['nombre'])));
+            $file_tournament    = $request->hasFile('tournament_file') ? $request->tournament_file : null;
+            $turnament_name    = $request->hasFile('tournament_file') ? 'tournament_'.$file_base_name.'.'.$file_tournament->extension() : $file_base_name;
+            $data['turnament']['directorio'] = $turnament_name;
+
+
+
             $tournament = Turnament::create($data['turnament']);
+
+            $path = 'tournaments/'. $tournament->id;
+
+            if(!is_null($file_tournament)){
+                Storage::disk('local')->putFileAs($path, $file_tournament, $turnament_name);
+            }
+
             $tournament->estado = $tournament->estado;
             $tournament->tipo = $tournament->tipo;
 
@@ -100,7 +116,7 @@ class TurnamentController extends Controller
                 ],404);
             }
 
-            if ($tournament->estado->id != 1) {
+            if ($tournament->estado->id == 3) {
                 return response()->json([
                     'message' => "No es posible modificar el torneo ya que su estado es: ". $tournament->estado->nombreEstado
                 ],409);
