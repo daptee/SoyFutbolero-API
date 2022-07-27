@@ -17,6 +17,13 @@ class Turnament extends Model
 
     public $timestamps = false;
 
+    protected $attributes = [
+        'id_estado' => 1,
+        'fecha_crea' => 213,
+        'hora_crea' => 1,
+        'id_estado' => 1
+    ];
+
     public function estado(){
         return $this->BelongsTo(TurnamentState::class,'id_estado');
     }
