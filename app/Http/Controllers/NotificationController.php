@@ -114,7 +114,8 @@ class NotificationController extends Controller
             $notification->delete();
 
             return response()->json([
-                'message' => 'Se elimino exitosamente la notificacion.'
+                'message' => 'Se elimino exitosamente la notificacion.',
+                'data' => ['id' => $id ]
             ]);
         }catch(Exception $e){
             return response()->json([
