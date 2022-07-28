@@ -68,4 +68,8 @@ class Match extends Model
     public function estado(){
         return $this->belongsTo(PartidoEstados::class, 'id_estado');
     }
+
+    public function match_group(){
+        return $this->hasOne(MatchGroup::class, 'id_partido','id');
+    }
 }
