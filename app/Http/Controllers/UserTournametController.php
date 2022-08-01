@@ -30,6 +30,7 @@ class UserTournametController extends Controller
                     $user->usuario_id = $user->usuario->id;
                     $user->usuario_nombre = $user->usuario->apellido . ' '.$user->usuario->nombre;
                     $user->estado_pago_id = $user->estado->id;
+                    $user->mail = $user->usuario->mail;
                     $user->estado_pago_nombre = $user->estado->nombreEstado;
                 }
 
@@ -71,6 +72,7 @@ class UserTournametController extends Controller
                 $user->usuario_id = $user->usuario->id;
                 $user->usuario_nombre = $user->usuario->apellido . ' '.$user->usuario->nombre;
                 $user->estado_pago_id = $user->estado->id;
+                $user->mail = $user->usuario->mail;
                 $user->estado_pago_nombre = $user->estado->nombreEstado;
             }
 
@@ -110,6 +112,7 @@ class UserTournametController extends Controller
                 $user->usuario_id = $user->usuario->id;
                 $user->usuario_nombre = $user->usuario->apellido . ' '.$user->usuario->nombre;
                 $user->estado_pago_id = $user->estado->id;
+                $user->mail = $user->usuario->mail;
                 $user->estado_pago_nombre = $user->estado->nombreEstado;
             }
 
@@ -124,5 +127,43 @@ class UserTournametController extends Controller
         }
     }
 
+
+    public function delete($id){
+        try{
+            $user_delete = UserTournamet::whereId($id)->first();
+
+            if (!$user_delete){
+                return response()->json([
+                    'message' => 'No se encontro el usuario.'
+                ],404);
+            }
+
+            $id_torneo  = $user_delete->id_torneo;
+
+            $user_delete->delete();
+
+            $user_tornament = Turnament::whereId($id_torneo)
+            ->orderBy('id','desc')
+            ->with('usuarios_torneo')
+            ->first();
+
+            foreach($user_tornament->usuarios_torneo as $user){
+                $user->usuario_id = $user->usuario->id;
+                $user->usuario_nombre = $user->usuario->apellido . ' '.$user->usuario->nombre;
+                $user->estado_pago_id = $user->estado->id;
+                $user->mail = $user->usuario->mail;
+                $user->estado_pago_nombre = $user->estado->nombreEstado;
+            }
+
+            return response()->json([
+                'message' => 'Usuario eliminado del Torneo N: '.$id_torneo ,
+                'data' => $user_tornament->usuarios_torneo
+            ]);
+        }catch(Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ],500);
+        }
+    }
 
 }
