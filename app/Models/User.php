@@ -87,4 +87,8 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(UserTournamet::class);
     }
 
+    public function usuario_notificacion(){
+        return $this->hasMany(UserNotification::class, 'usuario_id', 'id');
+    }
+
 }

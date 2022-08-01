@@ -48,4 +48,8 @@ class Turnament extends Model
         return $this->hasMany(UserTournamet::class,'id_torneo','id')->with(['usuario','estado']);
     }
 
+    public function notificaciones(){
+        return $this->hasMany(Notification::class,'id_torneo','id');
+    }
+
 }

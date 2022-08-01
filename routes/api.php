@@ -88,3 +88,11 @@ Route::prefix('user-tournament')->group(function () {
     Route::put('/{id}','App\Http\Controllers\UserTournametController@update')->middleware('api-auth');
     Route::delete('/{id}','App\Http\Controllers\UserTournametController@delete')->middleware('api-auth');
 });
+
+Route::prefix('notification')->group(function () {
+    Route::get('/','App\Http\Controllers\NotificationController@list');
+    Route::post('','App\Http\Controllers\NotificationController@create');
+    Route::put('/{id}','App\Http\Controllers\NotificationController@update');
+    Route::delete('/{id}','App\Http\Controllers\NotificationController@delete');
+    Route::post('read/{id}','App\Http\Controllers\NotificationController@readNotification');
+});
