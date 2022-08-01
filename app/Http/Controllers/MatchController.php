@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\{
     Match,
+    MatchGroup,
     Stadium,
     Stage,
     Team,
@@ -32,8 +33,9 @@ class MatchController extends Controller
             foreach($tournaments as $tournament){
                 $matches = Match::where('id_torneo', $tournament->id)
                 ->orderBy('id', 'DESC')
-                ->with('fase','estadio','equipo_local','equipo_visitante','estado')->get();
+                ->with('fase','estadio','equipo_local','equipo_visitante','estado','match_group')->get();
                 foreach($matches as $match) {
+                    $match->ronda =  isset($match->match_group) && !is_null($match->match_group) ? $match->match_group->ronda : null;
                     $match->fase_nombre    = $match->fase->tipoPartido->partido .' - '. $match->fase->tipoFase->tipo;
                     $match->partido_nombre = $match->equipo_local->nombre .' vs '. $match->equipo_visitante->nombre;
                 }
@@ -96,6 +98,8 @@ class MatchController extends Controller
             $matches = $request->matchs;
             $id_torneo = $request->id_torneo;
             $id_fase = $request->id_fase;
+            $ronda = $request->filled('ronda') ? $request->ronda : null;
+            $grupo_id = $request->filled('id_grupo') ? $request->id_grupo : null;
 
             foreach ($matches as $match){
                 $fecha  =  $match['fecha'];
@@ -107,7 +111,7 @@ class MatchController extends Controller
                 $hora = $match['hora'];
                 $hora = Carbon::createFromFormat('H:i', $hora);
 
-                Match::create([
+                $match = Match::create([
                     'id_torneo' => $id_torneo,
                     'id_fase' => $id_fase,
                     'id_estadio' => $match['id_estadio'],
@@ -117,18 +121,25 @@ class MatchController extends Controller
                     'fecha_vencimiento_pronostico' => $fecha_vencimiento_pronostico,
                     'hora' => $hora
                 ]);
+
+                if (!is_null($ronda) && !is_null($grupo_id)) {
+                    MatchGroup::create([
+                        'id_grupo' => $grupo_id,
+                        'id_partido' => $match->id,
+                        'ronda' => $ronda
+                    ]);
+                }
+
             }
 
             $tournament = Turnament::where('id', $id_torneo)->with('estado')->first();
 
             $matches = Match::where('id_torneo', $id_torneo)
             ->orderBy('id', 'DESC')
-            ->with('fase','estadio','equipo_local','equipo_visitante','estado')->get();
+            ->with('fase','estadio','equipo_local','equipo_visitante','estado','match_group')->get();
 
             foreach($matches as $match) {
-                if (!isset($match->fase->tipoPartido)) {
-                    return $match;
-                }
+                $match->ronda =  isset($match->match_group) && !is_null($match->match_group) ? $match->match_group->ronda : null;
                 $match->fase_nombre    = $match->fase->tipoPartido->partido .' - '. $match->fase->tipoFase->tipo;
                 $match->partido_nombre = $match->equipo_local->nombre .' vs '. $match->equipo_visitante->nombre;
             }
@@ -150,6 +161,9 @@ class MatchController extends Controller
         try{
             $data = $request->all();
             $match = Match::where('id', $id)->first();
+            $ronda = $request->filled('ronda') ? $request->ronda : null;
+            $grupo_id = $request->filled('id_grupo') ? $request->id_grupo : null;
+
 
             if (is_null($match)) {
                 return response()->json([
@@ -173,16 +187,25 @@ class MatchController extends Controller
                 'id_estado' => $data['id_estado']
             ]);
 
+            if (!is_null($ronda) && !is_null($grupo_id)) {
+                MatchGroup::updateOrCreate([
+                    'id_grupo' => $grupo_id,
+                    'id_partido' => $match->id,
+                ],[
+                    'ronda' => $ronda,
+                    'id_grupo' => $grupo_id,
+                    'id_partido' => $match->id,
+                ]);
+            }
+
             $tournament = Turnament::where('id', $match->id_torneo)->with('estado')->first();
 
             $matches = Match::where('id_torneo', $match->id_torneo)
             ->orderBy('id', 'DESC')
-            ->with('fase','estadio','equipo_local','equipo_visitante','estado')->get();
+            ->with('fase','estadio','equipo_local','equipo_visitante','estado','match_group')->get();
 
             foreach($matches as $match) {
-                if (!isset($match->fase->tipoPartido)) {
-                    return $match;
-                }
+                $match->ronda =  isset($match->match_group) && !is_null($match->match_group) ? $match->match_group->ronda : null;
                 $match->fase_nombre    = $match->fase->tipoPartido->partido .' - '. $match->fase->tipoFase->tipo;
                 $match->partido_nombre = $match->equipo_local->nombre .' vs '. $match->equipo_visitante->nombre;
             }

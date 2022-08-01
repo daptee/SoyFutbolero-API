@@ -45,7 +45,7 @@ Route::prefix('turnament')->group(function () {
     Route::get('/','App\Http\Controllers\TurnamentController@list')->middleware('api-auth');
     Route::get('/{id}','App\Http\Controllers\TurnamentController@getById')->middleware('api-auth');
     Route::post('/','App\Http\Controllers\TurnamentController@create')->middleware('api-auth');
-    Route::put('/{id}','App\Http\Controllers\TurnamentController@update')->middleware('api-auth');
+    Route::post('/edit','App\Http\Controllers\TurnamentController@update')->middleware('api-auth');
     Route::delete('/{id}','App\Http\Controllers\TurnamentController@delete')->middleware('api-auth');
     Route::post('/change-state','App\Http\Controllers\TurnamentController@changeState')->middleware('api-auth');
     Route::get('/stage/{id}','App\Http\Controllers\TurnamentController@getTournamentStages')->middleware('api-auth');

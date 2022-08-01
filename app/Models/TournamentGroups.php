@@ -24,4 +24,8 @@ class TournamentGroups extends Model
     public function teams(){
         return $this->hasMany(TournamentTeam::class,'id_grupo','id')->with('team');
     }
+
+    public function match_group(){
+        return $this->hasMany(MatchGroup::class);
+    }
 }

@@ -11,6 +11,7 @@ use  App\Models\{
 };
 use Carbon\Carbon;
 use App\Services\JwtService;
+use Illuminate\Support\Facades\Storage;
 
 class TurnamentController extends Controller
 {
@@ -59,14 +60,27 @@ class TurnamentController extends Controller
     public function create(Request $request){
         try{
             $data = $request->all();
+            $data['turnament'] = json_decode($data['turnament']);
+            $data['stages'] = explode(',',$data['stages']);
+            $data['turnament'] = (array) $data['turnament'];
 
             #Crear Torneo
-            $data['turnament']['fecha_crea'] = date('Y-m-d');
-            $data['turnament']['hora_crea'] = date('H:i:s');
             $data['turnament']['user_crea'] = JwtService::getUser()->id;
-            $data['turnament']['id_estado'] = 1;
+
+            # Agrego el archivo
+            $file_base_name = strtolower(str_replace(" ", "_", trim($data['turnament']['nombre'])));
+            $file_tournament    = $request->hasFile('tournament_file') ? $request->tournament_file : null;
+            $turnament_name    = $request->hasFile('tournament_file') ? 'tournament_'.$file_base_name.'.'.$file_tournament->extension() : $file_base_name;
+            $data['turnament']['directorio'] = $turnament_name;
 
             $tournament = Turnament::create($data['turnament']);
+
+            $path = 'tournaments/'. $tournament->id;
+
+            if(!is_null($file_tournament)){
+                Storage::disk('public')->putFileAs($path, $file_tournament, $turnament_name);
+            }
+
             $tournament->estado = $tournament->estado;
             $tournament->tipo = $tournament->tipo;
 
@@ -90,9 +104,11 @@ class TurnamentController extends Controller
         }
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request){
         try{
+            $id = $request->id;
             $tournament =Turnament::whereId($id)->first();
+            $path = 'tournaments/'. $tournament->id;
 
             if (is_null($tournament)) {
                 return response()->json([
@@ -100,20 +116,35 @@ class TurnamentController extends Controller
                 ],404);
             }
 
-            if ($tournament->estado->id != 1) {
+            if ($tournament->estado->id == 3) {
                 return response()->json([
                     'message' => "No es posible modificar el torneo ya que su estado es: ". $tournament->estado->nombreEstado
                 ],409);
             }
+            $turnament_req = json_decode($request->tournaments);
+            $tournament_data = (array)$turnament_req;
 
-            $tournament_data = $request->filled('tournament') ? $request->tournament : null;
+            if($request->hasFile('tournament_file')){
+                if (Storage::disk('public')->exists($path.'/'.$tournament->directorio)) {
+                    Storage::disk('public')->delete($path.'/'.$tournament->directorio);
+                }
+
+                $file_base_name = strtolower(str_replace(" ", "_", trim($tournament_data['nombre'])));
+                $file_tournament    = $request->tournament_file ;
+                $turnament_name    = 'tournament_'.$file_base_name.'.'.$file_tournament->extension();
+
+                Storage::disk('public')->putFileAs($path, $file_tournament, $turnament_name);
+                $tournament_data['directorio'] = $turnament_name;
+            }
+
             if (!is_null($tournament_data)) {
                 Turnament::updateOrCreate([
                     'id' => $id
                 ], $tournament_data);
             }
 
-            $stages_ids = $request->filled('stages') ? $request->stages : null;
+            $stages = explode(',',$request->stages);
+            $stages_ids = $request->filled('stages') ? $stages : null;
             if (!is_null($stages_ids)) {
                 #Agrego Los stages nuevos
                 foreach ($stages_ids as $stage_id) {
@@ -237,6 +268,7 @@ class TurnamentController extends Controller
 
             $teams = [];
             foreach ($tournament_teams as $team){
+                $team->team->grupo_id = $team->group->id;
                 $team->team->grupo = 'Grupo '. $team->group->grupo;
                 $teams[] = $team->team;
             }
