@@ -7,7 +7,9 @@ use  App\Models\{
     Turnament,
     TournamentGroups,
     TurnamentStage,
-    TournamentTeam
+    TournamentTeam,
+    Medallero,
+    UserTournamet
 };
 use Carbon\Carbon;
 use App\Services\JwtService;
@@ -17,12 +19,19 @@ class TurnamentController extends Controller
 {
     public function list(){
         try{
-            $turnaments = Turnament::with(['torneoFase','torneoFase.fase','estado','tipo'])->get();
+            $turnaments = Turnament::with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->get();
 
             if($turnaments->count() == 0){
                 return response()->json([
                     'message' => 'No se encontraron torneos.',
                 ],404);
+            }
+
+            foreach ($turnaments as $tournament){
+                foreach ($tournament->medallero as $medallero){
+                    $medallero->id_usuario =  $medallero->usuarios->id;
+                    $medallero->nombre_completo = $medallero->usuarios->apellido .' '.$medallero->usuarios->nombre;
+                }
             }
 
             return response()->json([
@@ -91,7 +100,11 @@ class TurnamentController extends Controller
                 TurnamentStage::create($stage);
             }
 
-            $tournament = Turnament::whereId($tournament->id)->with(['torneoFase','torneoFase.fase','estado','tipo'])->first();
+            $tournament = Turnament::whereId($tournament->id)->with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->first();
+
+            foreach($tournament->medallero as $usuario){
+                $usuario->nombre_completo = $usuario->usuarios->apellido .' '.$usuario->usuarios->nombre;
+            }
 
             return response()->json([
                 'message' => 'Torneo creado con exitos.',
@@ -163,7 +176,11 @@ class TurnamentController extends Controller
                 }
             }
 
-            $tournament = Turnament::whereId($id)->with(['torneoFase','torneoFase.fase','estado','tipo'])->first();
+            $tournament = Turnament::whereId($id)->with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->first();
+
+            foreach($tournament->medallero as $usuario){
+                $usuario->nombre_completo = $usuario->usuarios->apellido .' '.$usuario->usuarios->nombre;
+            }
 
             return response()->json([
                 'message' => 'Torneo N: '.$id.' modificado con éxito',
@@ -276,6 +293,124 @@ class TurnamentController extends Controller
 
             return $teams;
         }catch (Exception $error){
+            return response()->json([
+                'message' => $error->getMessage()
+            ],500);
+        }
+    }
+
+    public function getTournamentUsers($id){
+        try{
+            $tournament = UserTournamet::where('id_torneo',$id)->with(['usuario','estado'])->get();
+
+            if($tournament->count() == 0){
+                return response()->json([
+                    'message' => "Torneo no tiene usuarios registrados."
+                ],404);
+            }
+
+            foreach ($tournament as $users){
+                $users->usuario_id =  $users->usuario->id;
+                $users->nombre_completo = $users->usuario->apellido .' '.$users->usuario->nombre;
+                $users->estado_descripcion =  $users->estado->nombreEstado;
+            }
+
+            return response()->json([
+                'message' => 'Los ganadores fueron asignados con exito.',
+                'data' => $tournament
+            ]);
+        } catch (Exception $error){
+            return response()->json([
+                'message' => $error->getMessage()
+            ],500);
+        }
+    }
+
+    public function setWinners(Request $request, $id){
+        try{
+            $tournament = Turnament::whereId($id)->first();
+
+            if(!$tournament){
+                return response()->json([
+                    'message' => "Datos incorrectos."
+                ],400);
+            }
+
+            $usuarios = $request->usuarios;
+
+            if (count($usuarios) != $tournament->ganadores){
+                return response()->json([
+                    'message' => "La cantidad de ganadores no coincide con la del Torneo. Por favor revisar."
+                ],400);
+            }
+
+            foreach($usuarios as $usuario){
+
+                Medallero::create([
+                    'torneo_id' => $tournament->id,
+                    'usuario_id' => $usuario['id_usuario'],
+                    'puesto' => $usuario['puesto'],
+                ]);
+            }
+
+            $tournament = Turnament::whereId($id)->with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->first();
+
+            foreach($tournament->medallero as $usuario){
+                $usuario->nombre_completo = $usuario->usuarios->apellido .' '.$usuario->usuarios->nombre;
+            }
+
+            return response()->json([
+                'message' => 'Los ganadores fueron asignados con exito.',
+                'data' => $tournament
+            ]);
+        } catch (Exception $error){
+            return response()->json([
+                'message' => $error->getMessage()
+            ],500);
+        }
+    }
+
+    public function updateWinners(Request $request, $id){
+        try{
+            $tournament = Turnament::whereId($id)->first();
+
+            if(!$tournament){
+                return response()->json([
+                    'message' => "Datos incorrectos."
+                ],400);
+            }
+
+            $usuarios = $request->usuarios;
+
+            if (count($usuarios) != $tournament->ganadores){
+                return response()->json([
+                    'message' => "La cantidad de ganadores no coincide con la del Torneo. Por favor revisar."
+                ],400);
+            }
+
+            foreach($usuarios as $usuario){
+
+                Medallero::updateOrCreate([
+                    'torneo_id' => $tournament->id,
+                    'puesto' => $usuario['puesto'],
+                ],[
+                    'usuario_id' => $usuario['id_usuario'],
+                    'torneo_id' => $tournament->id,
+                    'puesto' => $usuario['puesto'],
+                ]);
+            }
+
+            $tournament = Turnament::whereId($id)->with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->first();
+
+            foreach($tournament->medallero as $usuario){
+                $usuario->nombre_completo = $usuario->usuarios->apellido .' '.$usuario->usuarios->nombre;
+            }
+
+            return response()->json([
+                'message' => 'Los ganadores fueron actualizados con exito.',
+                'data' => $tournament
+            ]);
+        } catch (Exception $error){
             return response()->json([
                 'message' => $error->getMessage()
             ],500);

@@ -50,6 +50,9 @@ Route::prefix('turnament')->group(function () {
     Route::post('/change-state','App\Http\Controllers\TurnamentController@changeState')->middleware('api-auth');
     Route::get('/stage/{id}','App\Http\Controllers\TurnamentController@getTournamentStages')->middleware('api-auth');
     Route::get('/team/{id}','App\Http\Controllers\TurnamentController@getTournamentTeams')->middleware('api-auth');
+    Route::get('/users/{id}','App\Http\Controllers\TurnamentController@getTournamentUsers')->middleware('api-auth');
+    Route::post('/winners/{id}','App\Http\Controllers\TurnamentController@setWinners')->middleware('api-auth');
+    Route::put('/winners/{id}','App\Http\Controllers\TurnamentController@updateWinners')->middleware('api-auth');
 });
 
 Route::prefix('stage')->group(function () {
@@ -90,9 +93,9 @@ Route::prefix('user-tournament')->group(function () {
 });
 
 Route::prefix('notification')->group(function () {
-    Route::get('/','App\Http\Controllers\NotificationController@list');
-    Route::post('','App\Http\Controllers\NotificationController@create');
-    Route::put('/{id}','App\Http\Controllers\NotificationController@update');
-    Route::delete('/{id}','App\Http\Controllers\NotificationController@delete');
-    Route::post('read/{id}','App\Http\Controllers\NotificationController@readNotification');
+    Route::get('/','App\Http\Controllers\NotificationController@list')->middleware('api-auth');
+    Route::post('','App\Http\Controllers\NotificationController@create')->middleware('api-auth');
+    Route::put('/{id}','App\Http\Controllers\NotificationController@update')->middleware('api-auth');
+    Route::delete('/{id}','App\Http\Controllers\NotificationController@delete')->middleware('api-auth');
+    Route::post('read/{id}','App\Http\Controllers\NotificationController@readNotification')->middleware('api-auth');
 });
