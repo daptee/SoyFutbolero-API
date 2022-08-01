@@ -52,4 +52,7 @@ class Turnament extends Model
         return $this->hasMany(Notification::class,'id_torneo','id');
     }
 
+    public function medallero(){
+        return $this->hasMany(Medallero::class,'torneo_id','id')->with(['usuarios']);
+    }
 }
