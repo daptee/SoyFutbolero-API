@@ -39,6 +39,7 @@ Route::prefix('user')->group(function () {
     Route::get('/{id}','App\Http\Controllers\UserController@getById')->middleware('api-auth');
     Route::post('/','App\Http\Controllers\UserController@create')->middleware('api-auth');
     Route::put('/{id}','App\Http\Controllers\UserController@update')->middleware('api-auth');
+    Route::post('/register','App\Http\Controllers\UserController@register');
 });
 
 Route::prefix('turnament')->group(function () {
