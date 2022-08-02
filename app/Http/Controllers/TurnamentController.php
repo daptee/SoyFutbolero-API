@@ -262,7 +262,10 @@ class TurnamentController extends Controller
                 $stage->nombre = $stage->fase->tipoFase->tipo . ' - ' . $stage->fase->tipoPartido->partido;
             }
 
-            return $turnaments;
+            return response()->json([
+                'message' => 'Fases devueltos con exito',
+                'data' => $turnaments
+            ]);
         }catch (Exception $error){
             return response()->json([
                 'message' => $error->getMessage()
@@ -291,7 +294,10 @@ class TurnamentController extends Controller
             }
 
 
-            return $teams;
+            return response()->json([
+                'message' => 'Equipos devueltos con exito',
+                'data' => $teams
+            ]);
         }catch (Exception $error){
             return response()->json([
                 'message' => $error->getMessage()

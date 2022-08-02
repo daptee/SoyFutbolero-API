@@ -151,4 +151,55 @@ class NotificationController extends Controller
         }
     }
 
+    public function getNotificationViewers($id){
+        try{
+            $users = UserNotification::where('notificacion_id', $id)->with('usuario')->get();
+
+            if($users->count() == 0){
+                return response()->json([
+                    'message' => "Aun no hay usuarios que vieron la notificacion."
+                ],400);
+            }
+
+            $usuarios = [];
+
+            foreach($users as $user){
+                $user->usuario_id = $user->usuario->id;
+                $user->nombre_completo = $user->usuario->apellido . ' '. $user->usuario->nombre;
+                $usuarios[] = $user;
+            }
+
+            return response()->json([
+                'message' => 'Notificacion marcada como leida.',
+                "data" => $usuarios
+            ]);
+        }catch(Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function deleteNotificationUser($id){
+        try{
+            $notification = UserNotification::where('id', $id)->first();
+
+            if(!$notification){
+                return response()->json([
+                    'message' => "La notificacion a no exite."
+                ],400);
+            }
+
+            $notification->delete();
+
+            return response()->json([
+                'message' => 'Usuario-notificacion eliminada.'
+            ]);
+        }catch(Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ],500);
+        }
+    }
+
 }

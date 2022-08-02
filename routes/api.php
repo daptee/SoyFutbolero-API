@@ -98,4 +98,6 @@ Route::prefix('notification')->group(function () {
     Route::put('/{id}','App\Http\Controllers\NotificationController@update')->middleware('api-auth');
     Route::delete('/{id}','App\Http\Controllers\NotificationController@delete')->middleware('api-auth');
     Route::post('read/{id}','App\Http\Controllers\NotificationController@readNotification')->middleware('api-auth');
+    Route::get('users/{id}','App\Http\Controllers\NotificationController@getNotificationViewers')->middleware('api-auth');
+    Route::delete('users/{id}','App\Http\Controllers\NotificationController@deleteNotificationUser')->middleware('api-auth');
 });
