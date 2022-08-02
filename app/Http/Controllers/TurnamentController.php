@@ -28,6 +28,9 @@ class TurnamentController extends Controller
             }
 
             foreach ($turnaments as $tournament){
+                $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
+                $tournament->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+
                 foreach ($tournament->medallero as $medallero){
                     $medallero->id_usuario =  $medallero->usuarios->id;
                     $medallero->nombre_completo = $medallero->usuarios->apellido .' '.$medallero->usuarios->nombre;
@@ -54,6 +57,9 @@ class TurnamentController extends Controller
                     'message' => 'No se encontro torneos con el Id: '.$id,
                 ],404);
             }
+
+            $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
+            $tournament->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
 
             return response()->json([
                 'message' => 'Torneo N: '.$id.' devuelto con éxito',
@@ -101,6 +107,9 @@ class TurnamentController extends Controller
             }
 
             $tournament = Turnament::whereId($tournament->id)->with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->first();
+            $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
+            $tournament->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+
 
             foreach($tournament->medallero as $usuario){
                 $usuario->nombre_completo = $usuario->usuarios->apellido .' '.$usuario->usuarios->nombre;
@@ -177,6 +186,9 @@ class TurnamentController extends Controller
             }
 
             $tournament = Turnament::whereId($id)->with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->first();
+            $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
+            $tournament->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+
 
             foreach($tournament->medallero as $usuario){
                 $usuario->nombre_completo = $usuario->usuarios->apellido .' '.$usuario->usuarios->nombre;
