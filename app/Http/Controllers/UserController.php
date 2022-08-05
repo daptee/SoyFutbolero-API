@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Mail\ResetPasword;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -57,7 +60,13 @@ class UserController extends Controller
         try{
             $data = $request->all();
 
-            $data['password'] = $data['is_admin'] == 1 ? bcrypt($data['password']) : md5($data['password']);
+            if( User::where('usuario',$data['usuario'])->exists() || User::where('mail',$data['mail'])->exists() ){
+                return response()->json([
+                    'message' => "Usuarios y/o mail ya se encuentran registrados."
+                ],400);
+            }
+
+            $data['password'] = bcrypt($data['password']);
 
             $user = User::create($data);
 
@@ -103,6 +112,12 @@ class UserController extends Controller
         try{
             $data = $request->all();
 
+            if( User::where('usuario',$data['usuario'])->exists() || User::where('mail',$data['mail'])->exists() ){
+                return response()->json([
+                    'message' => "Usuarios y/o mail ya se encuentran registrados."
+                ],400);
+            }
+
             $password = $data['password'];
             $data['password'] = bcrypt($password);
 
@@ -120,9 +135,51 @@ class UserController extends Controller
             $data = array_merge($this->respondWithToken($token),[ 'message' => 'Usuario creado con exito.', 'usuario' => $user ], );
 
             return response()->json($data);
-        }catch(Exception $e){
+        }catch(Exception $error){
             return response()->json([
-                'message' => $e->getMessage()
+                'message' => $error->getMessage()
+            ],500);
+        }
+    }
+
+    public function resetPassword(Request $request){
+        try{
+            if(!$request->has('usuario')){
+                return response()->json([
+                    'message' => "Datos invalidos."
+                ],400);
+            }
+
+
+            $usuario = $request->usuario;
+            $password = Str::random(15);
+            $encryopted = bcrypt($password);
+
+            $user_updated = User::where('usuario',$usuario)
+            ->update([
+                'password' => bcrypt($password)
+            ]);
+
+            if ($user_updated != 1) {
+                return response()->json([
+                    'message' => 'Error al restablecer la clave.'
+                ],500);
+            }
+
+            $user = User::where('usuario',$usuario)->first();
+
+            $data = [
+                'password' => $password
+            ];
+
+            Mail::to($user->mail)->send(new ResetPasword($data));
+
+            return response()->json([
+                'message' => 'Se restablecio la clave. Por favor revise su email.',
+            ]);
+        }catch(Exception $error){
+            return response()->json([
+                'message' => $error->getMessage()
             ],500);
         }
     }

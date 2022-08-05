@@ -40,6 +40,7 @@ Route::prefix('user')->group(function () {
     Route::post('/','App\Http\Controllers\UserController@create')->middleware('api-auth');
     Route::put('/{id}','App\Http\Controllers\UserController@update')->middleware('api-auth');
     Route::post('/register','App\Http\Controllers\UserController@register');
+    Route::post('/reset-password','App\Http\Controllers\UserController@resetPassword');
 });
 
 Route::prefix('turnament')->group(function () {
