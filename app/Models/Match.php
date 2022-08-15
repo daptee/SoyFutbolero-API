@@ -70,6 +70,10 @@ class Match extends Model
     }
 
     public function match_group(){
-        return $this->hasOne(MatchGroup::class, 'id_partido','id');
+        return $this->hasOne(MatchGroup::class, 'id_partido','id')->with('grupo');
+    }
+
+    public function prediccion(){
+        return $this->hasMany(UserPrediction::class,'id_partido', 'id');
     }
 }

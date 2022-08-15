@@ -56,6 +56,7 @@ Route::prefix('turnament')->group(function () {
     Route::get('/users/{id}','App\Http\Controllers\TurnamentController@getTournamentUsers')->middleware('api-auth');
     Route::post('/winners/{id}','App\Http\Controllers\TurnamentController@setWinners')->middleware('api-auth');
     Route::put('/winners/{id}','App\Http\Controllers\TurnamentController@updateWinners')->middleware('api-auth');
+    Route::get('/all-data/{id}','App\Http\Controllers\TurnamentController@getAllDataById')->middleware('api-auth');
 });
 
 Route::prefix('stage')->group(function () {

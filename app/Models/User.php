@@ -94,4 +94,8 @@ class User extends Authenticatable implements JWTSubject
     public function medallero(){
         return $this->hasMany(Medallero::class,'usuario_id','id');
     }
+
+    public function prediccion(){
+        return $this->hasOne(UserPrediction::class,'id_usuario', 'id');
+    }
 }

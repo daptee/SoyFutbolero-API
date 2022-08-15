@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use  App\Models\{
-    Turnament,
-    TournamentGroups,
-    TurnamentStage,
-    TournamentTeam,
+    Match,
     Medallero,
+    TournamentGroups,
+    TournamentTeam,
+    Turnament,
+    TurnamentStage,
+    UserPrediction,
     UserTournamet
 };
 use Carbon\Carbon;
@@ -433,5 +435,128 @@ class TurnamentController extends Controller
                 'message' => $error->getMessage()
             ],500);
         }
+    }
+
+    public function getAllDataById($id){
+        try {
+            $tournament = Turnament::whereId($id)->with(['torneoFase','torneoFase.fase','estado','tipo'])->first();
+            $user_id = JwtService::getUser()->id;
+
+
+
+            if(is_null($tournament)){
+                return response()->json([
+                    'message' => 'No se encontro torneos con el Id: '.$id,
+                ],404);
+            }
+
+            $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
+            $tournament->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+            $tournament->user_table = $this->calculateTournamentPoints($tournament->id);
+
+            foreach($tournament->torneoFase as $tournament_stage){
+                $match_query = Match::query();
+                $match_query->where('id_torneo', $id)
+                ->where('id_fase', $tournament_stage->id_fase);
+                $match_query->with('estadio','equipo_local','equipo_visitante','estado','match_group');
+                $matchs = $match_query->orderBy('id', 'DESC')->get();
+                $tournament_stage->partidos = $matchs;
+
+                foreach($matchs as  $match){
+                    $file_path = $match->equipo_local->tipo->id == 1 ? 'teams/' . $match->equipo_local->id . '/' . $match->equipo_local->escudo : 'teams/' . $match->equipo_local->id . '/' . $match->equipo_local->bandera;
+                    $match->equipo_local->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+
+                    $file_path = $match->equipo_visitante->tipo->id == 1 ? 'teams/' . $match->equipo_visitante->id . '/' . $match->equipo_visitante->escudo : 'teams/' . $match->equipo_visitante->id . '/' . $match->equipo_visitante->bandera;
+                    $match->equipo_visitante->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+
+                    $file_path = 'stadiums/' . $match->estadio->id . '/' . $match->estadio->foto;
+                    $match->estadio->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+                }
+
+
+                foreach($tournament_stage->partidos as $partido) {
+                    $partido->usuario_prediccion = UserPrediction::where("id_usuario",$user_id  )->where("id_partido",$partido->id)->first();
+                }
+            }
+
+
+
+            return response()->json([
+                'message' => 'Torneo N: '.$id.' devuelto con éxito',
+                'data' => $tournament
+            ]);
+        } catch (Exception $error) {
+            return response()->json([
+                'message' => $error->getMessage()
+            ],500);
+        }
+    }
+
+    private function calculateTournamentPoints($tournament_id){
+        $matchs             = Match::where('id_torneo', $tournament_id)->get();
+        $users_tournament   = UserTournamet::where("id_torneo", $tournament_id)->with('usuario')->get();
+        $users_ids          = $users_tournament->pluck('usuario.id');
+        $matchs_ids         = $matchs->pluck('id');
+        $users_predictions  = UserPrediction::whereIn("id_usuario",$users_ids  )->whereIn("id_partido",$matchs_ids)->get();
+
+        $users_table = [];
+
+        foreach($users_tournament as $user){
+
+            $path = 'users/'.$user->usuario->id;
+
+            $user_table = [
+                "usuario_id"        => $user->usuario->id,
+                "nombre"            => $user->usuario->nombre,
+                "apellido"          => $user->usuario->apellido,
+                "foto_url"          => Storage::disk('public')->exists($path.'/'.$user->usuario->foto) ? Storage::disk('public')->url($path.'/'.$user->usuario->foto) : Storage::disk('public')->url('defaults-image/sin-imagen.png'),
+                "total_acertados"   => 0,
+                "total_errados"     => 0,
+                "puntos"            => 0
+            ];
+            foreach($matchs as $match){
+
+                # Se suma puntos de los partidos que estan como finalizados.
+                if($match->id_estado != 4){
+                    continue;
+                }
+
+                $user_prediction =  $users_predictions->where('id_usuario', $user->usuario->id)->where('id_partido', $match->id)->first();
+
+                # Usuario no cargo prediccion
+                if(!$user_prediction){
+                    $user_table["total_errados"]++;
+                    continue;
+                }
+
+                # Verificamos si acerto el resultado
+                if( (($match->goles_1 ==  $match->goles_2)  && ($user_prediction->goles_1 == $user_prediction->goles_2)) ||
+                (($match->goles_1 >  $match->goles_2)  && ($user_prediction->goles_1 > $user_prediction->goles_2)) ||
+                (($match->goles_1 <  $match->goles_2)  && ($user_prediction->goles_1 < $user_prediction->goles_2)) ){
+                    $user_table["total_acertados"]++;
+
+                    $real_total_gol = $match->goles_1 + $match->goles_2;
+                    $predictions_total_gol = $user_prediction->goles_1 + $user_prediction->goles_2;
+
+                    $diferencia_goles = abs($real_total_gol -  $predictions_total_gol);
+
+                    if( $diferencia_goles == 0){
+                        $user_table["puntos"] += 10;
+                    } else {
+                        $user_table["puntos"] = $diferencia_goles > 5 ? ($user_table["puntos"] + 5) :  ($user_table["puntos"] + (10 - $diferencia_goles));
+                    }
+
+                } else {
+                    $user_table["total_errados"]++;
+                }
+
+            }
+
+            $users_table[] = $user_table;
+        }
+
+        $users_table = collect($users_table)->sortBy("puntos", SORT_REGULAR, true);
+
+        return $users_table;
     }
 }
