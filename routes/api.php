@@ -105,3 +105,7 @@ Route::prefix('notification')->group(function () {
     Route::get('users/{id}','App\Http\Controllers\NotificationController@getNotificationViewers')->middleware('api-auth');
     Route::delete('users/{id}','App\Http\Controllers\NotificationController@deleteNotificationUser')->middleware('api-auth');
 });
+
+Route::prefix('user-prediction')->group(function () {
+    Route::post('/','App\Http\Controllers\UserPredictionController@setPrediction')->middleware('api-auth');
+});
