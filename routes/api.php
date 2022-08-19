@@ -56,6 +56,7 @@ Route::prefix('turnament')->group(function () {
     Route::get('/users/{id}','App\Http\Controllers\TurnamentController@getTournamentUsers')->middleware('api-auth');
     Route::post('/winners/{id}','App\Http\Controllers\TurnamentController@setWinners')->middleware('api-auth');
     Route::put('/winners/{id}','App\Http\Controllers\TurnamentController@updateWinners')->middleware('api-auth');
+    Route::get('/all-data/{id}','App\Http\Controllers\TurnamentController@getAllDataById')->middleware('api-auth');
 });
 
 Route::prefix('stage')->group(function () {
@@ -103,4 +104,8 @@ Route::prefix('notification')->group(function () {
     Route::post('read/{id}','App\Http\Controllers\NotificationController@readNotification')->middleware('api-auth');
     Route::get('users/{id}','App\Http\Controllers\NotificationController@getNotificationViewers')->middleware('api-auth');
     Route::delete('users/{id}','App\Http\Controllers\NotificationController@deleteNotificationUser')->middleware('api-auth');
+});
+
+Route::prefix('user-prediction')->group(function () {
+    Route::post('/','App\Http\Controllers\UserPredictionController@setPrediction')->middleware('api-auth');
 });
