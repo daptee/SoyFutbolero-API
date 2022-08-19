@@ -7,11 +7,13 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 use JWTAuth;
 use JWT;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Services\JwtService;
+use Illuminate\Support\Facades\Storage;
 
 class LoginController extends Controller
 {
@@ -71,7 +73,12 @@ class LoginController extends Controller
         if (! $token = auth()->attempt($credentials))
             return response()->json(['message' => 'Usuario y/o clave no válidos.'], 400);
 
-        return $this->respondWithToken($token);
+        $user = $user = User::where('usuario',$credentials['usuario'])->with(['genero'])->first();
+        $path = 'users/'.$user->id;
+        $user->foto_url = Storage::disk('public')->exists($path.'/'.$user->foto) ? Storage::disk('public')->url($path.'/'.$user->foto) : null;
+
+
+        return $this->respondWithToken($token,$user);
     }
 
     public function logout(){
@@ -93,14 +100,15 @@ class LoginController extends Controller
 
 
 
-    protected function respondWithToken($token){
+    protected function respondWithToken($token, $user){
         $expire_in = config('jwt.ttl');
 
         return response()->json([
             'message' => 'Login exitoso.',
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'expires_in' => $expire_in * 60
+            'expires_in' => $expire_in * 60,
+            'usuario' =>  $user
         ]);
     }
 

@@ -39,6 +39,9 @@ Route::prefix('user')->group(function () {
     Route::get('/{id}','App\Http\Controllers\UserController@getById')->middleware('api-auth');
     Route::post('/','App\Http\Controllers\UserController@create')->middleware('api-auth');
     Route::put('/{id}','App\Http\Controllers\UserController@update')->middleware('api-auth');
+    Route::post('/edit-profile','App\Http\Controllers\UserController@editProfile')->middleware('api-auth');
+    Route::post('/register','App\Http\Controllers\UserController@register');
+    Route::post('/reset-password','App\Http\Controllers\UserController@resetPassword');
 });
 
 Route::prefix('turnament')->group(function () {
@@ -53,6 +56,7 @@ Route::prefix('turnament')->group(function () {
     Route::get('/users/{id}','App\Http\Controllers\TurnamentController@getTournamentUsers')->middleware('api-auth');
     Route::post('/winners/{id}','App\Http\Controllers\TurnamentController@setWinners')->middleware('api-auth');
     Route::put('/winners/{id}','App\Http\Controllers\TurnamentController@updateWinners')->middleware('api-auth');
+    Route::get('/all-data/{id}','App\Http\Controllers\TurnamentController@getAllDataById')->middleware('api-auth');
 });
 
 Route::prefix('stage')->group(function () {
@@ -102,6 +106,7 @@ Route::prefix('notification')->group(function () {
     Route::delete('users/{id}','App\Http\Controllers\NotificationController@deleteNotificationUser')->middleware('api-auth');
 });
 
+
 Route::get('/test', function() {
 
     return response()->json([
@@ -115,4 +120,10 @@ Route::get('/clear-cache', function() {
     return response()->json([
         "message" => "Cache cleared successfully"
     ]);
+});
+
+Route::prefix('user-prediction')->group(function () {
+    Route::post('/','App\Http\Controllers\UserPredictionController@setPrediction')->middleware('api-auth');
+    Route::get('/{tournament_id}/{user_id}','App\Http\Controllers\UserPredictionController@getPredictionByUserId')->middleware('api-auth');
+
 });
