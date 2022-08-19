@@ -101,3 +101,18 @@ Route::prefix('notification')->group(function () {
     Route::get('users/{id}','App\Http\Controllers\NotificationController@getNotificationViewers')->middleware('api-auth');
     Route::delete('users/{id}','App\Http\Controllers\NotificationController@deleteNotificationUser')->middleware('api-auth');
 });
+
+Route::get('/test', function() {
+
+    return response()->json([
+        "message" => "Test OK"
+    ]);
+});
+
+Route::get('/clear-cache', function() {
+    $exitCode = Artisan::call('optimize');
+
+    return response()->json([
+        "message" => "Cache cleared successfully"
+    ]);
+});
