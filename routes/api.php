@@ -106,7 +106,24 @@ Route::prefix('notification')->group(function () {
     Route::delete('users/{id}','App\Http\Controllers\NotificationController@deleteNotificationUser')->middleware('api-auth');
 });
 
+
+Route::get('/test', function() {
+
+    return response()->json([
+        "message" => "Test OK"
+    ]);
+});
+
+Route::get('/clear-cache', function() {
+    $exitCode = Artisan::call('optimize');
+
+    return response()->json([
+        "message" => "Cache cleared successfully"
+    ]);
+});
+
 Route::prefix('user-prediction')->group(function () {
     Route::post('/','App\Http\Controllers\UserPredictionController@setPrediction')->middleware('api-auth');
     Route::get('/{tournament_id}/{user_id}','App\Http\Controllers\UserPredictionController@getPredictionByUserId')->middleware('api-auth');
+
 });
