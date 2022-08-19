@@ -13,6 +13,7 @@ use JWTAuth;
 use JWT;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Services\JwtService;
+use Illuminate\Support\Facades\Storage;
 
 class LoginController extends Controller
 {
@@ -73,6 +74,9 @@ class LoginController extends Controller
             return response()->json(['message' => 'Usuario y/o clave no válidos.'], 400);
 
         $user = $user = User::where('usuario',$credentials['usuario'])->with(['genero'])->first();
+        $path = 'users/'.$user->id;
+        $user->foto_url = Storage::disk('public')->exists($path.'/'.$user->foto) ? Storage::disk('public')->url($path.'/'.$user->foto) : null;
+
 
         return $this->respondWithToken($token,$user);
     }

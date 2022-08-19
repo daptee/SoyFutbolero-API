@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Services\JwtService;
 use App\Mail\ResetPasword;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -90,6 +92,59 @@ class UserController extends Controller
             User::where('id',$id)->update($data);
 
             $user = User::where('id',$id)->with(['genero'])->first();
+
+            if(!$user){
+                return response()->json([
+                    'message' => 'No se encontro ningun usuario.'
+                ],404);
+            }
+
+            return response()->json([
+                'message' => 'Usuario actualizado con exito.',
+                'data' => $user
+            ]);
+        }catch(Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function editProfile(Request $request){
+        try{
+            $id = JwtService::getUser()->id;
+            $data = $request->all();
+
+            if(User::where('usuario',$request->usuario)->exists() || User::where('mail',$request->mail)->exists()){
+                return response()->json([
+                    'message' => "Usuarios y/o mail ya se encuentran registrados."
+                ],400);
+            }
+
+            $path = 'users/'.$id;
+
+            if( $request->hasFile('foto') ){
+                $user = User::select('foto')->where('id',$id)->first();
+
+
+                if (Storage::disk('public')->exists($path.'/'.$user->foto)) {
+                    Storage::disk('public')->delete($path.'/'.$user->foto);
+                }
+
+                $file_foto    = $request->foto;
+                $foto_name    = 'user_'.$id.'_profile.'.$file_foto->extension();
+                Storage::disk('public')->putFileAs($path, $file_foto, $foto_name);
+                $data['foto'] = $foto_name;
+            }
+
+            if($request->has('password') ){
+                $data['password'] = bcrypt($request->password);
+            }
+
+            User::where('id',$id)->update($data);
+
+            $user = User::where('id',$id)->with(['genero'])->first();
+            $user->foto_url = Storage::disk('public')->exists($path.'/'.$user->foto) ? Storage::disk('public')->url($path.'/'.$user->foto) : null;
 
             if(!$user){
                 return response()->json([
