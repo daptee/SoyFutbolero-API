@@ -108,4 +108,5 @@ Route::prefix('notification')->group(function () {
 
 Route::prefix('user-prediction')->group(function () {
     Route::post('/','App\Http\Controllers\UserPredictionController@setPrediction')->middleware('api-auth');
+    Route::get('/{tournament_id}/{user_id}','App\Http\Controllers\UserPredictionController@getPredictionByUserId')->middleware('api-auth');
 });

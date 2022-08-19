@@ -79,6 +79,36 @@ class UserPredictionController extends Controller
         }
     }
 
+    public function getPredictionByUserId($tournament_id, $user_id){
+        try{
+            $match_query = Match::query();
+            $match_query->where('id_torneo', $tournament_id);
+            $match_query->with('estadio','equipo_local','equipo_visitante','estado','match_group');
+            $matchs = $match_query->orderBy('id', 'DESC')->get();
+
+            foreach($matchs as  $match){
+                $file_path = $match->equipo_local->tipo->id == 1 ? 'teams/' . $match->equipo_local->id . '/' . $match->equipo_local->escudo : 'teams/' . $match->equipo_local->id . '/' . $match->equipo_local->bandera;
+                $match->equipo_local->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+
+                $file_path = $match->equipo_visitante->tipo->id == 1 ? 'teams/' . $match->equipo_visitante->id . '/' . $match->equipo_visitante->escudo : 'teams/' . $match->equipo_visitante->id . '/' . $match->equipo_visitante->bandera;
+                $match->equipo_visitante->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+
+                $file_path = 'stadiums/' . $match->estadio->id . '/' . $match->estadio->foto;
+                $match->estadio->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+
+                $match->usuario_prediccion = UserPrediction::where("id_usuario",$user_id  )->where("id_partido",$match->id)->first();
+            }
+
+            return response()->json([
+                "messages" => "Pronosticos devueltos con éxito.",
+                "data" =>  $matchs
+            ]);
+        }catch(Exception $error){
+            return response()->json([
+                'message' => $error->getMessage()
+            ],500);
+        }
+    }
 
     private static function getAtributes(){
         $atributes = [
