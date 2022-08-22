@@ -115,7 +115,7 @@ class UserController extends Controller
             $id = JwtService::getUser()->id;
             $data = $request->all();
 
-            if(User::where('usuario',$request->usuario)->exists() || User::where('mail',$request->mail)->exists()){
+            if(User::where('usuario',$request->usuario)->where("id","!=",$id)->exists() || User::where('mail',$request->mail)->where("id","!=",$id)->exists()){
                 return response()->json([
                     'message' => "Usuarios y/o mail ya se encuentran registrados."
                 ],400);
