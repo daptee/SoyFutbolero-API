@@ -31,8 +31,6 @@ class Match extends Model
         'id_torneo',
         'id_fase',
         'id_estadio',
-        'id_equipo_1',
-        'id_equipo_2',
     ];
 
     public $timestamps = false;
