@@ -127,3 +127,9 @@ Route::prefix('user-prediction')->group(function () {
     Route::get('/{tournament_id}/{user_id}','App\Http\Controllers\UserPredictionController@getPredictionByUserId')->middleware('api-auth');
 
 });
+
+Route::prefix('desafio')->group(function () {
+    Route::get('/','App\Http\Controllers\DesafioController@list')->middleware('api-auth');
+    Route::post('/','App\Http\Controllers\DesafioController@create')->middleware('api-auth');
+    Route::put('/estado/{id}','App\Http\Controllers\DesafioController@updateState')->middleware('api-auth');
+});

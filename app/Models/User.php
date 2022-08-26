@@ -98,4 +98,8 @@ class User extends Authenticatable implements JWTSubject
     public function prediccion(){
         return $this->hasOne(UserPrediction::class,'id_usuario', 'id');
     }
+
+    public function usuarios_desafio(){
+        return $this->hasMany(DesafioUsuario::class);
+    }
 }
