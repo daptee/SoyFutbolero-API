@@ -46,6 +46,7 @@ class DesafioController extends Controller
                     $data = [
                         "titulo" => "Fuiste desafiado!",
                         "mensaje" => "Ve a tu menu de desafios para aceptar!",
+                        "usuario_id"  => $user->id
                     ];
 
                     Notification::create($data);
@@ -94,14 +95,19 @@ class DesafioController extends Controller
 
     public function list(){
         try {
+            $user_id = JwtService::getUser()->id;
 
-            $challenge_user_create = Desafio::where("id",$id)->with('usuarios_desafio','estado')->first();
+            $challenge_user_create = Desafio::where("usuario_creacion_id", $user_id)
+            ->with('usuarios_desafio','estado');
 
-
+            $challenge_user_invitated = Desafio::whereHas("usuarios_desafio",function($query) use ($user_id){
+                $query->where('usuario_id', $user_id);
+            })
+            ->with('usuarios_desafio','estado')->union($challenge_user_create)->orderBy('id','desc')->get();
 
             return response()->json([
                 'message' => 'Desafio actualizado con exito.',
-                'data' => $challenge,
+                'data' => $challenge_user_invitated,
             ]);
         } catch (Exception $e) {
             return response()->json([
