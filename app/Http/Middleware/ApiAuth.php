@@ -16,19 +16,13 @@ class ApiAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        // if (!auth()->user() && !$request->ajax() ) {
-        //     return redirect()->route('login');
-        // }
-
-        // if ($request->ajax()){
-            if ($request->bearerToken()) {
-                return $next($request);
-            }
+        if (!$request->bearerToken()) {
             return response()->json([
-                'redirect' => '/login'
-            ],400);
-        // }
+                'message' => 'User Not authorized'
+            ],403);
+        }
 
+        return $next($request);
 
     }
 }
