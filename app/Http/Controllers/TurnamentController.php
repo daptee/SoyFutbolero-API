@@ -494,7 +494,7 @@ class TurnamentController extends Controller
 
     private function calculateTournamentPoints($tournament_id){
         $matchs             = Match::where('id_torneo', $tournament_id)->get();
-        $users_tournament   = UserTournamet::where("id_torneo", $tournament_id)->with('usuario')->get();
+        $users_tournament   = UserTournamet::where("id_torneo", $tournament_id)->where('id_estado',3)->with('usuario')->get();
         $users_ids          = $users_tournament->pluck('usuario.id');
         $matchs_ids         = $matchs->pluck('id');
         $users_predictions  = UserPrediction::whereIn("id_usuario",$users_ids  )->whereIn("id_partido",$matchs_ids)->get();
