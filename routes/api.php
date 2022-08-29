@@ -44,19 +44,19 @@ Route::prefix('user')->group(function () {
     Route::post('/reset-password','App\Http\Controllers\UserController@resetPassword');
 });
 
-Route::prefix('turnament')->group(function () {
-    Route::get('/','App\Http\Controllers\TurnamentController@list')->middleware('api-auth');
-    Route::get('/{id}','App\Http\Controllers\TurnamentController@getById')->middleware('api-auth');
-    Route::post('/','App\Http\Controllers\TurnamentController@create')->middleware('api-auth');
-    Route::post('/edit','App\Http\Controllers\TurnamentController@update')->middleware('api-auth');
-    Route::delete('/{id}','App\Http\Controllers\TurnamentController@delete')->middleware('api-auth');
-    Route::post('/change-state','App\Http\Controllers\TurnamentController@changeState')->middleware('api-auth');
-    Route::get('/stage/{id}','App\Http\Controllers\TurnamentController@getTournamentStages')->middleware('api-auth');
-    Route::get('/team/{id}','App\Http\Controllers\TurnamentController@getTournamentTeams')->middleware('api-auth');
-    Route::get('/users/{id}','App\Http\Controllers\TurnamentController@getTournamentUsers')->middleware('api-auth');
-    Route::post('/winners/{id}','App\Http\Controllers\TurnamentController@setWinners')->middleware('api-auth');
-    Route::put('/winners/{id}','App\Http\Controllers\TurnamentController@updateWinners')->middleware('api-auth');
-    Route::get('/all-data/{id}','App\Http\Controllers\TurnamentController@getAllDataById')->middleware('api-auth');
+Route::prefix('tournament')->group(function () {
+    Route::get('/','App\Http\Controllers\TournamentController@list')->middleware('api-auth');
+    Route::get('/{id}','App\Http\Controllers\TournamentController@getById')->middleware('api-auth');
+    Route::post('/','App\Http\Controllers\TournamentController@create')->middleware('api-auth');
+    Route::post('/edit','App\Http\Controllers\TournamentController@update')->middleware('api-auth');
+    Route::delete('/{id}','App\Http\Controllers\TournamentController@delete')->middleware('api-auth');
+    Route::post('/change-state','App\Http\Controllers\TournamentController@changeState')->middleware('api-auth');
+    Route::get('/stage/{id}','App\Http\Controllers\TournamentController@getTournamentStages')->middleware('api-auth');
+    Route::get('/team/{id}','App\Http\Controllers\TournamentController@getTournamentTeams')->middleware('api-auth');
+    Route::get('/users/{id}','App\Http\Controllers\TournamentController@getTournamentUsers')->middleware('api-auth');
+    Route::post('/winners/{id}','App\Http\Controllers\TournamentController@setWinners')->middleware('api-auth');
+    Route::put('/winners/{id}','App\Http\Controllers\TournamentController@updateWinners')->middleware('api-auth');
+    Route::get('/all-data/{id}','App\Http\Controllers\TournamentController@getAllDataById')->middleware('api-auth');
 });
 
 Route::prefix('stage')->group(function () {

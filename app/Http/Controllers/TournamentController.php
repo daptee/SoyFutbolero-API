@@ -17,8 +17,10 @@ use Carbon\Carbon;
 use App\Services\JwtService;
 use Illuminate\Support\Facades\Storage;
 
-class TurnamentController extends Controller
+class TournamentController extends Controller
 {
+    private const BASEPATH = "/storage/";
+
     public function list(){
         try{
             $turnaments = Turnament::with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->get();
@@ -31,11 +33,11 @@ class TurnamentController extends Controller
 
             foreach ($turnaments as $tournament){
                 $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
-                $tournament->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+                $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
                 foreach ($tournament->medallero as $medallero){
-                    $medallero->id_usuario =  $medallero->usuarios->id;
-                    $medallero->nombre_completo = $medallero->usuarios->apellido .' '.$medallero->usuarios->nombre;
+                    $medallero->id_usuario =  isset($medallero->usuarios->id) ? $medallero->usuarios->id :null;
+                    $medallero->nombre_completo = isset($medallero->usuarios->id) ? $medallero->usuarios->apellido .' '.$medallero->usuarios->nombre : null;
                 }
             }
 
@@ -61,7 +63,7 @@ class TurnamentController extends Controller
             }
 
             $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
-            $tournament->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+            $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
             return response()->json([
                 'message' => 'Torneo N: '.$id.' devuelto con éxito',
@@ -77,25 +79,25 @@ class TurnamentController extends Controller
     public function create(Request $request){
         try{
             $data = $request->all();
-            $data['turnament'] = json_decode($data['turnament']);
-            $data['stages'] = explode(',',$data['stages']);
-            $data['turnament'] = (array) $data['turnament'];
+
+            $data['tournament'] = $data['tournament'];
+            $data['stages'] = $data['stages'];
 
             #Crear Torneo
-            $data['turnament']['user_crea'] = JwtService::getUser()->id;
+            $data['tournament']['user_crea'] = JwtService::getUser()->id;
 
             # Agrego el archivo
-            $file_base_name = strtolower(str_replace(" ", "_", trim($data['turnament']['nombre'])));
+            $file_base_name = strtolower(str_replace(" ", "_", trim($data['tournament']['nombre'])));
             $file_tournament    = $request->hasFile('tournament_file') ? $request->tournament_file : null;
             $turnament_name    = $request->hasFile('tournament_file') ? 'tournament_'.$file_base_name.'.'.$file_tournament->extension() : $file_base_name;
-            $data['turnament']['directorio'] = $turnament_name;
+            $data['tournament']['directorio'] = $turnament_name;
 
-            $tournament = Turnament::create($data['turnament']);
+            $tournament = Turnament::create($data['tournament']);
 
             $path = 'tournaments/'. $tournament->id;
 
             if(!is_null($file_tournament)){
-                Storage::disk('public')->putFileAs($path, $file_tournament, $turnament_name);
+                Storage::disk('public_proyect')->putFileAs($path, $file_tournament, $turnament_name);
             }
 
             $tournament->estado = $tournament->estado;
@@ -110,7 +112,7 @@ class TurnamentController extends Controller
 
             $tournament = Turnament::whereId($tournament->id)->with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->first();
             $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
-            $tournament->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+            $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
 
             foreach($tournament->medallero as $usuario){
@@ -145,19 +147,19 @@ class TurnamentController extends Controller
                     'message' => "No es posible modificar el torneo ya que su estado es: ". $tournament->estado->nombreEstado
                 ],409);
             }
-            $turnament_req = json_decode($request->tournaments);
-            $tournament_data = (array)$turnament_req;
+
+            $tournament_data = $request->tournament;
 
             if($request->hasFile('tournament_file')){
-                if (Storage::disk('public')->exists($path.'/'.$tournament->directorio)) {
-                    Storage::disk('public')->delete($path.'/'.$tournament->directorio);
+                if (Storage::disk('public_proyect')->exists($path.'/'.$tournament->directorio)) {
+                    Storage::disk('public_proyect')->delete($path.'/'.$tournament->directorio);
                 }
 
                 $file_base_name = strtolower(str_replace(" ", "_", trim($tournament_data['nombre'])));
                 $file_tournament    = $request->tournament_file ;
                 $turnament_name    = 'tournament_'.$file_base_name.'.'.$file_tournament->extension();
 
-                Storage::disk('public')->putFileAs($path, $file_tournament, $turnament_name);
+                Storage::disk('public_proyect')->putFileAs($path, $file_tournament, $turnament_name);
                 $tournament_data['directorio'] = $turnament_name;
             }
 
@@ -167,7 +169,7 @@ class TurnamentController extends Controller
                 ], $tournament_data);
             }
 
-            $stages = explode(',',$request->stages);
+            $stages = $request->stages;
             $stages_ids = $request->filled('stages') ? $stages : null;
             if (!is_null($stages_ids)) {
                 #Agrego Los stages nuevos
@@ -189,7 +191,7 @@ class TurnamentController extends Controller
 
             $tournament = Turnament::whereId($id)->with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->first();
             $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
-            $tournament->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+            $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
 
             foreach($tournament->medallero as $usuario){
@@ -227,7 +229,10 @@ class TurnamentController extends Controller
             $tournament->save();
             $tournament = Turnament::whereId($tournament->id)->with(['torneoFase','torneoFase.fase','estado','tipo'])->first();
 
+            $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
+            $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
             $state = $request->id == 2 ? 'iniciado' : 'finalizado';
+
             return response()->json([
                 "message" => "Torneo $state con éxito.",
                 'data' => $tournament
@@ -374,6 +379,8 @@ class TurnamentController extends Controller
             }
 
             $tournament = Turnament::whereId($id)->with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->first();
+            $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
+            $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
             foreach($tournament->medallero as $usuario){
                 $usuario->nombre_completo = $usuario->usuarios->apellido .' '.$usuario->usuarios->nombre;
@@ -421,6 +428,8 @@ class TurnamentController extends Controller
             }
 
             $tournament = Turnament::whereId($id)->with(['torneoFase','torneoFase.fase','estado','tipo','medallero'])->first();
+            $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
+            $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
             foreach($tournament->medallero as $usuario){
                 $usuario->nombre_completo = $usuario->usuarios->apellido .' '.$usuario->usuarios->nombre;
@@ -464,13 +473,13 @@ class TurnamentController extends Controller
 
                 foreach($matchs as  $match){
                     $file_path = $match->equipo_local->tipo->id == 1 ? 'teams/' . $match->equipo_local->id . '/' . $match->equipo_local->escudo : 'teams/' . $match->equipo_local->id . '/' . $match->equipo_local->bandera;
-                    $match->equipo_local->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+                    $match->equipo_local->image_url = Storage::disk('public_proyect')->exists($file_path) ? Storage::disk('public_proyect')->url($file_path) : Storage::disk('public_proyect')->url('defaults-image/sin-imagen.png');
 
                     $file_path = $match->equipo_visitante->tipo->id == 1 ? 'teams/' . $match->equipo_visitante->id . '/' . $match->equipo_visitante->escudo : 'teams/' . $match->equipo_visitante->id . '/' . $match->equipo_visitante->bandera;
-                    $match->equipo_visitante->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+                    $match->equipo_visitante->image_url = Storage::disk('public_proyect')->exists($file_path) ? Storage::disk('public_proyect')->url($file_path) : Storage::disk('public_proyect')->url('defaults-image/sin-imagen.png');
 
                     $file_path = 'stadiums/' . $match->estadio->id . '/' . $match->estadio->foto;
-                    $match->estadio->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+                    $match->estadio->image_url = Storage::disk('public_proyect')->exists($file_path) ? Storage::disk('public_proyect')->url($file_path) : Storage::disk('public_proyect')->url('defaults-image/sin-imagen.png');
                 }
 
 
@@ -509,7 +518,7 @@ class TurnamentController extends Controller
                 "usuario_id"        => $user->usuario->id,
                 "nombre"            => $user->usuario->nombre,
                 "apellido"          => $user->usuario->apellido,
-                "foto_url"          => Storage::disk('public')->exists($path.'/'.$user->usuario->foto) ? Storage::disk('public')->url($path.'/'.$user->usuario->foto) : Storage::disk('public')->url('defaults-image/sin-imagen.png'),
+                "foto_url"          => Storage::disk('public_proyect')->exists($path.'/'.$user->usuario->foto) ? Storage::disk('public_proyect')->url($path.'/'.$user->usuario->foto) : Storage::disk('public_proyect')->url('defaults-image/sin-imagen.png'),
                 "total_acertados"   => 0,
                 "total_errados"     => 0,
                 "puntos"            => 0
