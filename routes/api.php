@@ -122,6 +122,27 @@ Route::get('/clear-cache', function() {
     ]);
 });
 
+Route::post('/command-artisan', function(Request $request) {
+    try{
+        if(!$request->has('command')){
+            return response()->json([
+                "message" => "Comando no identificado"
+            ]);
+        }
+        $command = $request->command;
+
+        Artisan::call($command);
+
+        return response()->json([
+            "message" => "Comando ejecutado correctamente"
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            "message" => $e->getMessage()
+        ],500);
+    }
+});
+
 Route::prefix('user-prediction')->group(function () {
     Route::post('/','App\Http\Controllers\UserPredictionController@setPrediction')->middleware('api-auth');
     Route::get('/{tournament_id}/{user_id}','App\Http\Controllers\UserPredictionController@getPredictionByUserId')->middleware('api-auth');
