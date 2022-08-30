@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
+    private const BASEPATH = "/storage/";
+
     public function list(){
         try{
             $users = User::with(['genero'])->orderBy('usuario','asc')->get();
@@ -127,13 +129,13 @@ class UserController extends Controller
                 $user = User::select('foto')->where('id',$id)->first();
 
 
-                if (Storage::disk('public')->exists($path.'/'.$user->foto)) {
-                    Storage::disk('public')->delete($path.'/'.$user->foto);
+                if (Storage::disk('public_proyect')->exists($path.'/'.$user->foto)) {
+                    Storage::disk('public_proyect')->delete($path.'/'.$user->foto);
                 }
 
                 $file_foto    = $request->foto;
                 $foto_name    = 'user_'.$id.'_profile.'.$file_foto->extension();
-                Storage::disk('public')->putFileAs($path, $file_foto, $foto_name);
+                Storage::disk('public_proyect')->putFileAs($path, $file_foto, $foto_name);
                 $data['foto'] = $foto_name;
             }
 
@@ -144,7 +146,7 @@ class UserController extends Controller
             User::where('id',$id)->update($data);
 
             $user = User::where('id',$id)->with(['genero'])->first();
-            $user->foto_url = Storage::disk('public')->exists($path.'/'.$user->foto) ? Storage::disk('public')->url($path.'/'.$user->foto) : null;
+            $user->foto_url = Storage::disk('public_proyect')->exists($path.'/'.$user->foto) ? self::BASEPATH . $path.'/'.$user->foto : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
             if(!$user){
                 return response()->json([

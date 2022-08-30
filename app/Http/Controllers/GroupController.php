@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Storage;
 
 class GroupController extends Controller
 {
+    private const BASEPATH = "/storage/";
+
     public function getByid($id)
     {
         try {
@@ -49,7 +51,7 @@ class GroupController extends Controller
                     ->get();
 
                     $file_path = $team->team->tipo->id == 1 ? 'teams/' . $team->team->id . '/' . $team->team->escudo : 'teams/' . $team->team->id . '/' . $team->team->bandera;
-                    $team->team->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+                    $team->team->image_url = Storage::disk('public')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
                     $points = $this->_calculateTeamPoints($matchs, $team->team);
 

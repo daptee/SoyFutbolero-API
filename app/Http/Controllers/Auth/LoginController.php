@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Storage;
 
 class LoginController extends Controller
 {
+    private const BASEPATH = "/storage/";
+
     /*
     |--------------------------------------------------------------------------
     | Login Controller
@@ -75,7 +77,7 @@ class LoginController extends Controller
 
         $user = $user = User::where('usuario',$credentials['usuario'])->with(['genero'])->first();
         $path = 'users/'.$user->id;
-        $user->foto_url = Storage::disk('public')->exists($path.'/'.$user->foto) ? Storage::disk('public')->url($path.'/'.$user->foto) : null;
+        $user->foto_url = Storage::disk('public')->exists($path.'/'.$user->foto) ? self::BASEPATH . $path.'/'.$user->foto : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
 
         return $this->respondWithToken($token,$user);
