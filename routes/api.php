@@ -82,8 +82,8 @@ Route::prefix('group')->group(function () {
 });
 
 Route::prefix('match')->group(function () {
-    Route::get('/torrnament','App\Http\Controllers\MatchController@list')->middleware('api-auth');
-    Route::get('/torrnament/{tournament_id}','App\Http\Controllers\MatchController@tournamentMatchsById')->middleware('api-auth');
+    Route::get('/tournament','App\Http\Controllers\MatchController@list')->middleware('api-auth');
+    Route::get('/tournament/{tournament_id}','App\Http\Controllers\MatchController@tournamentMatchsById')->middleware('api-auth');
     Route::post('/','App\Http\Controllers\MatchController@create')->middleware('api-auth');
     Route::put('/{id}','App\Http\Controllers\MatchController@update')->middleware('api-auth');
 });
