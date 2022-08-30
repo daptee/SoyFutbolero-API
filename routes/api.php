@@ -82,8 +82,8 @@ Route::prefix('group')->group(function () {
 });
 
 Route::prefix('match')->group(function () {
-    Route::get('/torrnament','App\Http\Controllers\MatchController@list')->middleware('api-auth');
-    Route::get('/torrnament/{tournament_id}','App\Http\Controllers\MatchController@tournamentMatchsById')->middleware('api-auth');
+    Route::get('/tournament','App\Http\Controllers\MatchController@list')->middleware('api-auth');
+    Route::get('/tournament/{tournament_id}','App\Http\Controllers\MatchController@tournamentMatchsById')->middleware('api-auth');
     Route::post('/','App\Http\Controllers\MatchController@create')->middleware('api-auth');
     Route::put('/{id}','App\Http\Controllers\MatchController@update')->middleware('api-auth');
 });
@@ -120,6 +120,27 @@ Route::get('/clear-cache', function() {
     return response()->json([
         "message" => "Cache cleared successfully"
     ]);
+});
+
+Route::post('/command-artisan', function(Request $request) {
+    try{
+        if(!$request->has('command')){
+            return response()->json([
+                "message" => "Comando no identificado"
+            ]);
+        }
+        $command = $request->command;
+
+        Artisan::call($command);
+
+        return response()->json([
+            "message" => "Comando ejecutado correctamente"
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            "message" => $e->getMessage()
+        ],500);
+    }
 });
 
 Route::prefix('user-prediction')->group(function () {

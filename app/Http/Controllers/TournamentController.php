@@ -80,8 +80,8 @@ class TournamentController extends Controller
         try{
             $data = $request->all();
 
-            $data['tournament'] = $data['tournament'];
-            $data['stages'] = $data['stages'];
+            $data['tournament'] = (array)json_decode($data['tournament']);
+            $data['stages'] = explode(',',$data['stages']);
 
             #Crear Torneo
             $data['tournament']['user_crea'] = JwtService::getUser()->id;
@@ -339,9 +339,9 @@ class TournamentController extends Controller
                 $users->nombre_completo = $users->usuario->apellido .' '.$users->usuario->nombre;
                 $users->estado_descripcion =  $users->estado->nombreEstado;
             }
-
+            dd($tournament->toArray());
             return response()->json([
-                'message' => 'Los ganadores fueron asignados con exito.',
+                'message' => 'Usuarios de Torneo devueltos con exito.',
                 'data' => $tournament
             ]);
         } catch (Exception $error){
