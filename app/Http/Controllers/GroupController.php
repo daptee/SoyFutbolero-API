@@ -57,7 +57,7 @@ class GroupController extends Controller
 
                     $posiciones[] = $points;
                 }
-                $posiciones = collect($posiciones)->sortBy("puntos", SORT_REGULAR, true)->sortBy("diferencia_goles", SORT_REGULAR, true);
+                $posiciones = collect($posiciones)->sortByDesc("puntos");
                 $group->posiciones = $posiciones;
             }
 

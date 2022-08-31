@@ -564,7 +564,7 @@ class TournamentController extends Controller
             $users_table[] = $user_table;
         }
 
-        $users_table = collect($users_table)->sortBy("puntos", SORT_REGULAR, true);
+        $users_table = collect($users_table)->sortByDesc("puntos");
 
         return $users_table;
     }
