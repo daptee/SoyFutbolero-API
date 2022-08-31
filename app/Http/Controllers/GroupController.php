@@ -30,8 +30,6 @@ class GroupController extends Controller
             # Obtenemos los partidos de ronda que esten finalizado
             # para calcular los puntos
 
-
-
             foreach($groups as $group){
 
                 if($group->teams->count() == 0){
