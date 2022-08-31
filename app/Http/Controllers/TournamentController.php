@@ -460,7 +460,7 @@ class TournamentController extends Controller
             }
 
             $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
-            $tournament->image_url = Storage::disk('public')->exists($file_path) ? Storage::disk('public')->url($file_path) : Storage::disk('public')->url('defaults-image/sin-imagen.png');
+            $tournament->image_url = Storage::disk('public')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
             $tournament->user_table = $this->calculateTournamentPoints($tournament->id);
 
             foreach($tournament->torneoFase as $tournament_stage){
@@ -473,13 +473,13 @@ class TournamentController extends Controller
 
                 foreach($matchs as  $match){
                     $file_path = $match->equipo_local->tipo->id == 1 ? 'teams/' . $match->equipo_local->id . '/' . $match->equipo_local->escudo : 'teams/' . $match->equipo_local->id . '/' . $match->equipo_local->bandera;
-                    $match->equipo_local->image_url = Storage::disk('public_proyect')->exists($file_path) ? Storage::disk('public_proyect')->url($file_path) : Storage::disk('public_proyect')->url('defaults-image/sin-imagen.png');
+                    $match->equipo_local->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
                     $file_path = $match->equipo_visitante->tipo->id == 1 ? 'teams/' . $match->equipo_visitante->id . '/' . $match->equipo_visitante->escudo : 'teams/' . $match->equipo_visitante->id . '/' . $match->equipo_visitante->bandera;
-                    $match->equipo_visitante->image_url = Storage::disk('public_proyect')->exists($file_path) ? Storage::disk('public_proyect')->url($file_path) : Storage::disk('public_proyect')->url('defaults-image/sin-imagen.png');
+                    $match->equipo_visitante->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
                     $file_path = 'stadiums/' . $match->estadio->id . '/' . $match->estadio->foto;
-                    $match->estadio->image_url = Storage::disk('public_proyect')->exists($file_path) ? Storage::disk('public_proyect')->url($file_path) : Storage::disk('public_proyect')->url('defaults-image/sin-imagen.png');
+                    $match->estadio->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
                 }
 
 
@@ -518,7 +518,7 @@ class TournamentController extends Controller
                 "usuario_id"        => $user->usuario->id,
                 "nombre"            => $user->usuario->nombre,
                 "apellido"          => $user->usuario->apellido,
-                "foto_url"          => Storage::disk('public_proyect')->exists($path.'/'.$user->usuario->foto) ? Storage::disk('public_proyect')->url($path.'/'.$user->usuario->foto) : Storage::disk('public_proyect')->url('defaults-image/sin-imagen.png'),
+                "foto_url"          => Storage::disk('public_proyect')->exists($path.'/'.$user->usuario->foto) ? self::BASEPATH . $path.'/'.$user->usuario->foto : self::BASEPATH . 'defaults-image/sin-imagen.png',
                 "total_acertados"   => 0,
                 "total_errados"     => 0,
                 "puntos"            => 0
