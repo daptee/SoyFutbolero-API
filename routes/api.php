@@ -63,15 +63,15 @@ Route::prefix('stage')->group(function () {
     Route::get('/','App\Http\Controllers\StageController@list')->middleware('api-auth');
 });
 
-Route::prefix('turnament-state')->group(function () {
+Route::prefix('tournament-state')->group(function () {
     Route::get('/','App\Http\Controllers\TournamentStateController@list')->middleware('api-auth');
 });
 
-Route::prefix('turnament-type')->group(function () {
+Route::prefix('tournament-type')->group(function () {
     Route::get('/','App\Http\Controllers\TournamentTypeController@list')->middleware('api-auth');
 });
 
-Route::get('/turnament-group','App\Http\Controllers\TurnamentController@listWithGroup')->middleware('api-auth');
+Route::get('/tournament-group','App\Http\Controllers\TournamentController@listWithGroup')->middleware('api-auth');
 
 Route::prefix('group')->group(function () {
     Route::get('/','App\Http\Controllers\GroupController@list')->middleware('api-auth');

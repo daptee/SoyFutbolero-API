@@ -148,7 +148,7 @@ class TournamentController extends Controller
                 ],409);
             }
 
-            $tournament_data = $request->tournament;
+            $tournament_data = (array)json_decode($request->tournaments);
 
             if($request->hasFile('tournament_file')){
                 if (Storage::disk('public_proyect')->exists($path.'/'.$tournament->directorio)) {
@@ -170,7 +170,7 @@ class TournamentController extends Controller
             }
 
             $stages = $request->stages;
-            $stages_ids = $request->filled('stages') ? $stages : null;
+            $stages_ids = $request->filled('stages') ? explode(',',$stages) : null;
             if (!is_null($stages_ids)) {
                 #Agrego Los stages nuevos
                 foreach ($stages_ids as $stage_id) {
@@ -339,7 +339,7 @@ class TournamentController extends Controller
                 $users->nombre_completo = $users->usuario->apellido .' '.$users->usuario->nombre;
                 $users->estado_descripcion =  $users->estado->nombreEstado;
             }
-            dd($tournament->toArray());
+
             return response()->json([
                 'message' => 'Usuarios de Torneo devueltos con exito.',
                 'data' => $tournament

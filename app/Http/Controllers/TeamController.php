@@ -17,7 +17,7 @@ class TeamController extends Controller
 
             foreach ($teams as $team){
                 $file_path = $team->tipo->id == 1 ? self::PUBLIC_BASE_PATH . $team->id . '/' . $team->escudo : self::PUBLIC_BASE_PATH . $team->id . '/' . $team->bandera;
-                $team->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-mage/sin-imagen.png';
+                $team->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
             }
 
             return response()->json([
