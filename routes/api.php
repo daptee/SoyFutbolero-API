@@ -110,7 +110,7 @@ Route::prefix('notification')->group(function () {
 Route::get('/test', function() {
 
     return response()->json([
-        "message" => "Test OK"
+        "message" => "Test OK OK"
     ]);
 });
 
