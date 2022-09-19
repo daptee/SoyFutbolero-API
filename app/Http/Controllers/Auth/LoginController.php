@@ -83,25 +83,6 @@ class LoginController extends Controller
         return $this->respondWithToken($token,$user);
     }
 
-    public function apiAdminLogin(Request $request){
-        $credentials = $request->only('usuario', 'password');
-
-        if (! $token = auth()->attempt($credentials))
-            return response()->json(['message' => 'Usuario y/o clave no válidos.-'], 400);
-
-        $user = $user = User::where('usuario',$credentials['usuario'])->where('is_admin', '=', 1)->with(['genero'])->first();
-
-        if (!$user) {
-            return response()->json(['message' => 'Usuario y/o clave no válidos.'], 400);
-        }
-
-        $path = 'users/'.$user->id;
-        $user->foto_url = Storage::disk('public')->exists($path.'/'.$user->foto) ? self::BASEPATH . $path.'/'.$user->foto : self::BASEPATH . 'defaults-image/sin-imagen.png';
-
-
-        return $this->respondWithToken($token,$user);
-    }
-
     public function logout(){
         auth()->logout();
 

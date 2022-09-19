@@ -103,10 +103,10 @@ class MatchController extends Controller
 
             foreach ($matches as $match){
                 $fecha  =  $match['fecha'];
-//                $fecha = Carbon::createFromFormat('Y-m-d', $fecha);
+                $fecha = Carbon::createFromFormat('Y-m-d', $fecha);
 
                 $fecha_vencimiento_pronostico = $match['fecha_vencimiento_pronostico'];
-//                $fecha_vencimiento_pronostico = Carbon::createFromFormat('Y-m-d', $fecha_vencimiento_pronostico);
+                $fecha_vencimiento_pronostico = Carbon::createFromFormat('Y-m-d', $fecha_vencimiento_pronostico);
 
                 $hora = $match['hora'];
                 $hora = Carbon::createFromFormat('H:i', $hora);
