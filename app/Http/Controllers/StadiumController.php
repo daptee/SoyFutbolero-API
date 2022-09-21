@@ -59,6 +59,9 @@ class StadiumController extends Controller
     public function update(Request $request, $id){
         try{
             $data = $request->all();
+            if(is_null($data['id_equipo'])) {
+                $data['id_equipo'] = 0;
+            }
 
             Stadium::whereId($id)
             ->update($data);
