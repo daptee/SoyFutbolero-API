@@ -19,6 +19,7 @@ Route::get('/user', function (Request $request) {
 });
 
 Route::post('login','App\Http\Controllers\Auth\LoginController@apiLogin');
+Route::post('adminLogin','App\Http\Controllers\Auth\LoginController@apiAdminLogin');
 
 Route::prefix('stadium')->group(function () {
     Route::get('/','App\Http\Controllers\StadiumController@list')->middleware('api-auth');
