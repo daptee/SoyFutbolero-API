@@ -66,7 +66,6 @@ class MatchController extends Controller
             }
 
             $matches = Match::where('id_torneo', $tournament_id)
-            ->orderBy('id', 'DESC')
             ->with('fase','estadio','equipo_local','equipo_visitante','estado')->get();
             foreach($matches as $match) {
                 $match->fase_nombre    = $match->fase->tipoPartido->partido .' - '. $match->fase->tipoFase->tipo;
