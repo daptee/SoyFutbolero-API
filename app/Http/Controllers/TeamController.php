@@ -56,10 +56,9 @@ class TeamController extends Controller
         try{
             $data = $request->all();
 
-
             $file_base_name = strtolower(str_replace(" ", "_", trim($data['nombre'])));
-            $file_bandera   = $request->hasFile('bandera') ? $request->escudo : null;
-            $file_escudo    = $request->hasFile('escudo') ? $request->bandera : null;
+            $file_bandera   = $request->hasFile('bandera') ? $request->bandera : null;
+            $file_escudo    = $request->hasFile('escudo') ? $request->escudo : null;
 
             $bandera_name   = $request->hasFile('bandera') ? 'bandera_'.$file_base_name.'.'.$file_bandera->extension() : $file_base_name;
             $escudo_name    = $request->hasFile('escudo') ? 'escudo_'.$file_base_name.'.'.$file_escudo->extension() : $file_base_name;
