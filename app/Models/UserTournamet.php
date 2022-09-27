@@ -11,7 +11,7 @@ class UserTournamet extends Model
 
     protected $table = 'usuarios_torneos';
 
-    protected $hidden = ['id_usuario','id_torneo','id_estado','usuario_id'];
+    protected $hidden = ['id_usuario','usuario_id'];
 
     protected $attributes = [
         'id_estado' => 1,
