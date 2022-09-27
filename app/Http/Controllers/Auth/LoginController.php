@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Turnament;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -75,10 +76,16 @@ class LoginController extends Controller
         if (! $token = auth()->attempt($credentials))
             return response()->json(['message' => 'Usuario y/o clave no válidos.'], 400);
 
-        $user = $user = User::where('usuario',$credentials['usuario'])->with(['genero', 'usuarios_torneo', 'usuarios_torneo.estado', 'usuarios_torneo.torneo'])->first();
+        $user = User::where('usuario',$credentials['usuario'])->with(['genero', 'usuarios_torneo', 'usuarios_torneo.estado'])->first();
         $path = 'users/'.$user->id;
         $user->foto_url = Storage::disk('public')->exists($path.'/'.$user->foto) ? self::BASEPATH . $path.'/'.$user->foto : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
+        foreach($user->usuarios_torneo as $usuarioTorneo) {
+            $tournament = Turnament::whereId($usuarioTorneo->id_torneo)->first();
+            $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
+            $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
+            $usuarioTorneo->torneo = $tournament;
+        }
 
         return $this->respondWithToken($token,$user);
     }
