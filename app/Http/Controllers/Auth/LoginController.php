@@ -78,7 +78,7 @@ class LoginController extends Controller
 
         $user = User::where('usuario',$credentials['usuario'])->with(['genero', 'usuarios_torneo', 'usuarios_torneo.estado'])->first();
         $path = 'users/'.$user->id;
-        $user->foto_url = Storage::disk('public')->exists($path.'/'.$user->foto) ? self::BASEPATH . $path.'/'.$user->foto : self::BASEPATH . 'defaults-image/sin-imagen.png';
+        $user->foto_url = Storage::disk('public_proyect')->exists($path.'/'.$user->foto) ? self::BASEPATH . $path.'/'.$user->foto : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
         foreach($user->usuarios_torneo as $usuarioTorneo) {
             $tournament = Turnament::whereId($usuarioTorneo->id_torneo)->first();
@@ -96,14 +96,14 @@ class LoginController extends Controller
         if (! $token = auth()->attempt($credentials))
             return response()->json(['message' => 'Usuario y/o clave no válidos.'], 400);
 
-        $user = $user = User::where('usuario',$credentials['usuario'])->where('is_admin', '=', 1)->with(['genero'])->first();
+        $user = User::where('usuario',$credentials['usuario'])->where('is_admin', '=', 1)->with(['genero'])->first();
 
         if (!$user) {
             return response()->json(['message' => 'Usuario y/o clave no válidos.'], 400);
         }
 
         $path = 'users/'.$user->id;
-        $user->foto_url = Storage::disk('public')->exists($path.'/'.$user->foto) ? self::BASEPATH . $path.'/'.$user->foto : self::BASEPATH . 'defaults-image/sin-imagen.png';
+        $user->foto_url = Storage::disk('public_proyect')->exists($path.'/'.$user->foto) ? self::BASEPATH . $path.'/'.$user->foto : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
 
         return $this->respondWithToken($token,$user);
