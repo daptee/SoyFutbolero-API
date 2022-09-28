@@ -13,12 +13,22 @@ class NotificationController extends Controller
 {
     public function list(){
         try{
-            $notificationes = Notification::with('torneo')->get();
+            $user_id = JwtService::getUser()->id;
+            $allNotifications = Notification::with(['torneo', 'usuario_notificacion'])->get();
 
-            if ($notificationes->count() == 0){
-                return response()->json([
-                    'message' => 'No se encontraron notificaciones.',
-                ],404);
+            $i = 0;
+            foreach($allNotifications as $notificacion) {
+                $userReaded = false;
+                foreach($notificacion->usuario_notificacion as $usuario) {
+                    if ($usuario->usuario_id === $user_id) {
+                        $userReaded = true;
+                    }
+                }
+                if (!$userReaded) {
+                    $notificationes[$i] = $notificacion;
+                    unset($notificationes[$i]['usuario_notificacion']);
+                    $i++;
+                }
             }
 
             return response()->json([
@@ -139,7 +149,7 @@ class NotificationController extends Controller
                 'usuario_id'    => JwtService::getUser()->id
             ]);
 
-            $notification->delete();
+//            $notification->delete();
 
             return response()->json([
                 'message' => 'Notificacion marcada como leida.'
@@ -182,15 +192,15 @@ class NotificationController extends Controller
 
     public function deleteNotificationUser($id){
         try{
-            $notification = UserNotification::where('id', $id)->first();
+            $userNotification = UserNotification::where('id', $id)->first();
 
-            if(!$notification){
+            if(!$userNotification){
                 return response()->json([
                     'message' => "La notificacion a no exite."
                 ],400);
             }
 
-            $notification->delete();
+            $userNotification->delete();
 
             return response()->json([
                 'message' => 'Usuario-notificacion eliminada.'
