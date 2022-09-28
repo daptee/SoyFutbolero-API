@@ -16,7 +16,7 @@ class DesafioController extends Controller
 {
     public function create(Request $request){
         try {
-            if(!$request->has(['nombre','usuarios_desafiados'])){
+            if(!$request->has(['nombre','usuarios_desafiados', 'torneo_id'])){
                 return response()->json([
                     'message' => "Datos incompletos.",
                 ], 400);
@@ -27,7 +27,8 @@ class DesafioController extends Controller
 
             $challenge = Desafio::create([
                 'nombre' => $request->nombre,
-                'usuario_creacion_id' => $user_id
+                'usuario_creacion_id' => $user_id,
+                'torneo_id' => $request->torneo_id
             ]);
 
             $mails_invitations = [];
@@ -53,9 +54,9 @@ class DesafioController extends Controller
                 }
 
             }
-            Mail::to($mails_invitations)->send(new DesafioMail());
-            $challenge = Desafio::where("id",$challenge->id)->with('usuarios_desafio','estado')->first();
-            $challenge->invitations = $mails_invitations;
+//            Mail::to($mails_invitations)->send(new DesafioMail());
+//            $challenge = Desafio::where("id",$challenge->id)->with('usuarios_desafio','estado')->first();
+//            $challenge->invitations = $mails_invitations;
 
             return response()->json([
                 'message' => 'Desafio creado con exito.',
@@ -98,12 +99,12 @@ class DesafioController extends Controller
             $user_id = JwtService::getUser()->id;
 
             $challenge_user_create = Desafio::where("usuario_creacion_id", $user_id)
-            ->with('usuarios_desafio','estado');
+            ->with(['usuarios_desafio','estado']);
 
             $challenge_user_invitated = Desafio::whereHas("usuarios_desafio",function($query) use ($user_id){
                 $query->where('usuario_id', $user_id);
             })
-            ->with('usuarios_desafio','estado')->union($challenge_user_create)->orderBy('id','desc')->get();
+            ->with('usuarios_desafio','estado', 'torneo')->union($challenge_user_create)->orderBy('id','desc')->get();
 
             return response()->json([
                 'message' => 'Desafio actualizado con exito.',

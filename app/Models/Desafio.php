@@ -14,7 +14,8 @@ class Desafio extends Model
     protected $fillable = [
         'nombre',
         'desafio_estado_id',
-        'usuario_creacion_id'
+        'usuario_creacion_id',
+        'torneo_id'
     ];
 
     protected $hidden = [
@@ -34,5 +35,9 @@ class Desafio extends Model
 
     public function estado(){
         return $this->belongsTo(DesafioEstado::class,'desafio_estado_id');
+    }
+
+    public function torneo(){
+        return $this->belongsTo(Turnament::class,'torneo_id');
     }
 }

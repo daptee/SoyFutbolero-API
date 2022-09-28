@@ -14,7 +14,7 @@ class AlterNotificationsAddcolumns extends Migration
     public function up()
     {
         Schema::table('notificaciones', function (Blueprint $table) {
-            $table->bigInteger('usuario_id')->nullable()->after('id_torneo');
+            $table->bigInteger('usuario_id')->nullable()->after('torneo_id');
         });
     }
 
