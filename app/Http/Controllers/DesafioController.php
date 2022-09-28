@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Desafio;
-use App\Models\DesafioEstado;
+//use App\Models\DesafioEstado;
 use App\Models\DesafioUsuario;
 use App\Models\User;
-use App\Models\Notification;
+//use App\Models\Notification;
 use App\Services\JwtService;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DesafioMail;
@@ -43,13 +43,13 @@ class DesafioController extends Controller
                         "desafio_id" => $challenge->id
                     ]);
 
-                    $data = [
+                    /*$data = [
                         "titulo" => "Fuiste desafiado!",
                         "mensaje" => "Ve a tu menu de desafios para aceptar!",
                         "usuario_id"  => $user->id
                     ];
 
-                    Notification::create($data);
+                    Notification::create($data);*/
                 }
 
             }
