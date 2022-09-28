@@ -15,6 +15,7 @@ class NotificationController extends Controller
         try{
             $user_id = JwtService::getUser()->id;
             $allNotifications = Notification::with(['torneo', 'usuario_notificacion'])->get();
+            $notificationes = [];
 
             $i = 0;
             foreach($allNotifications as $notificacion) {
