@@ -503,7 +503,7 @@ class TournamentController extends Controller
 
     private function calculateTournamentPoints($tournament_id){
         $matchs             = Match::where('id_torneo', $tournament_id)->get();
-        $users_tournament   = UserTournamet::where("id_torneo", $tournament_id)->where('id_estado',3)->with('usuario')->get();
+        $users_tournament   = UserTournamet::where("id_torneo", $tournament_id)->where('id_estado',3)->with(['usuario', 'usuario.genero'])->get();
         $users_ids          = $users_tournament->pluck('usuario.id');
         $matchs_ids         = $matchs->pluck('id');
         $users_predictions  = UserPrediction::whereIn("id_usuario",$users_ids  )->whereIn("id_partido",$matchs_ids)->get();
@@ -518,6 +518,7 @@ class TournamentController extends Controller
                 "usuario_id"        => $user->usuario->id,
                 "nombre"            => $user->usuario->nombre,
                 "apellido"          => $user->usuario->apellido,
+                "genero"            => $user->usuario->genero,
                 "foto_url"          => Storage::disk('public_proyect')->exists($path.'/'.$user->usuario->foto) ? self::BASEPATH . $path.'/'.$user->usuario->foto : self::BASEPATH . 'defaults-image/sin-imagen.png',
                 "total_acertados"   => 0,
                 "total_errados"     => 0,
