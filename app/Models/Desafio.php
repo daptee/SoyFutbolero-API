@@ -19,8 +19,6 @@ class Desafio extends Model
     ];
 
     protected $hidden = [
-        'desafio_estado_id',
-        'usuario_creacion_id',
         'created_at',
         'updated_at'
     ];

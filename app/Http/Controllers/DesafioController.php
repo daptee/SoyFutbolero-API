@@ -58,9 +58,11 @@ class DesafioController extends Controller
 //            $challenge = Desafio::where("id",$challenge->id)->with('usuarios_desafio','estado')->first();
 //            $challenge->invitations = $mails_invitations;
 
+            $challengeCreated = Desafio::where('id',$challenge->id)->with(['usuarios_desafio','estado', 'torneo'])->first();
+
             return response()->json([
                 'message' => 'Desafio creado con exito.',
-                'data' => $challenge,
+                'data' => $challengeCreated,
             ]);
         } catch (Exception $e) {
             return response()->json([
