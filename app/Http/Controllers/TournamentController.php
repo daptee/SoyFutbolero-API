@@ -447,11 +447,10 @@ class TournamentController extends Controller
     }
 
     public function getAllDataById($id){
+        ini_set('max_execution_time', 180);
         try {
             $tournament = Turnament::whereId($id)->with(['torneoFase','torneoFase.fase','estado','tipo'])->first();
             $user_id = JwtService::getUser()->id;
-
-
 
             if(is_null($tournament)){
                 return response()->json([
@@ -502,11 +501,11 @@ class TournamentController extends Controller
     }
 
     private function calculateTournamentPoints($tournament_id){
-        $matchs             = Match::where('id_torneo', $tournament_id)->get();
+        $matchs             = Match::where('id_torneo', $tournament_id)->with('prediccion')->get();
         $users_tournament   = UserTournamet::where("id_torneo", $tournament_id)->where('id_estado',3)->with(['usuario', 'usuario.genero'])->get();
-        $users_ids          = $users_tournament->pluck('usuario.id');
-        $matchs_ids         = $matchs->pluck('id');
-        $users_predictions  = UserPrediction::whereIn("id_usuario",$users_ids  )->whereIn("id_partido",$matchs_ids)->get();
+//        $users_ids          = $users_tournament->pluck('usuario.id');
+//        $matchs_ids         = $matchs->pluck('id');
+//        $users_predictions  = UserPrediction::whereIn("id_usuario",$users_ids  )->whereIn("id_partido",$matchs_ids)->get();
 
         $users_table = [];
 
@@ -531,7 +530,15 @@ class TournamentController extends Controller
                     continue;
                 }
 
-                $user_prediction =  $users_predictions->where('id_usuario', $user->usuario->id)->where('id_partido', $match->id)->first();
+                $user_prediction = null;
+                foreach($match->prediccion as $prediccion) {
+                    if ($prediccion->id_usuario === $user->usuario->id) {
+                        $user_prediction = $prediccion;
+                        break;
+                    }
+                }
+
+//                $user_prediction =  $users_predictions->where('id_usuario', $user->usuario->id)->where('id_partido', $match->id)->first();
 
                 # Usuario no cargo prediccion
                 if(!$user_prediction){
