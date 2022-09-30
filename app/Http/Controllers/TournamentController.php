@@ -460,7 +460,7 @@ class TournamentController extends Controller
             }
 
             $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
-            $tournament->image_url = Storage::disk('public')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
+            $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
             $tournament->user_table = (array)$this->calculateTournamentPoints($tournament->id);
 
             foreach($tournament->torneoFase as $tournament_stage){

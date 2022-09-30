@@ -41,7 +41,13 @@ class UserController extends Controller
 
     public function getById($id){
         try{
-            $user = User::where('id',$id)->with(['genero'])->first();
+            $user = User::where('id',$id)->with(['genero', 'medallero', 'medallero.torneo'])->first();
+
+            foreach($user->medallero as $medallero) {
+                $tournament = $medallero->torneo;
+                $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
+                $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
+            }
 
             if(!$user){
                 return response()->json([

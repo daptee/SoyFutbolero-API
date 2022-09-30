@@ -18,8 +18,6 @@ class Medallero extends Model
     ];
 
     protected $hidden = [
-        'torneo_id',
-        'usuario_id'
     ];
 
     public function torneo(){
