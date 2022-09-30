@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\{
     Match,
     MatchGroup,
@@ -15,6 +16,7 @@ use Carbon\Carbon;
 
 class MatchController extends Controller
 {
+    private const BASEPATH = "/storage/";
 
     public function list(){
         try{
@@ -70,6 +72,23 @@ class MatchController extends Controller
             foreach($matches as $match) {
                 $match->fase_nombre    = $match->fase->tipoPartido->partido .' - '. $match->fase->tipoFase->tipo;
                 $match->partido_nombre = $match->equipo_local->nombre .' vs '. $match->equipo_visitante->nombre;
+
+                $teamLocal = $match->equipo_local;
+                $teamVisitante = $match->equipo_visitante;
+
+                $file_path = $teamLocal->tipo->id == 1 ?
+                    TeamController::PUBLIC_BASE_PATH . $teamLocal->id . '/' . $teamLocal->escudo :
+                    TeamController::PUBLIC_BASE_PATH . $teamLocal->id . '/' . $teamLocal->bandera;
+                $match->equipo_local->image_url = Storage::disk('public_proyect')->exists($file_path) ?
+                    self::BASEPATH . $file_path :
+                    self::BASEPATH . 'defaults-image/sin-imagen.png';
+
+                $file_path = $teamVisitante->tipo->id == 1 ?
+                    TeamController::PUBLIC_BASE_PATH . $teamVisitante->id . '/' . $teamVisitante->escudo :
+                    TeamController::PUBLIC_BASE_PATH . $teamVisitante->id . '/' . $teamVisitante->bandera;
+                $match->equipo_visitante->image_url = Storage::disk('public_proyect')->exists($file_path) ?
+                    self::BASEPATH . $file_path :
+                    self::BASEPATH . 'defaults-image/sin-imagen.png';
             }
 
             $tournament->partidos = $matches;
