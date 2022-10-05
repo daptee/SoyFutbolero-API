@@ -207,19 +207,26 @@ class UserController extends Controller
 
     public function resetPassword(Request $request){
         try{
-            if(!$request->has('usuario')){
+            if(!$request->has('mail')){
                 return response()->json([
                     'message' => "Datos invalidos."
                 ],400);
             }
 
 
-            $usuario = $request->usuario;
+            $mail = $request->mail;
             $password = Str::random(15);
-            $encryopted = bcrypt($password);
+//            $encryopted = bcrypt($password);
 
-            $user_updated = User::where('usuario',$usuario)
-            ->update([
+            $user = User::where('mail', $mail)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'El correo ingresado es incorrecto'
+                ],400);
+            }
+
+            $user_updated = $user->update([
                 'password' => bcrypt($password)
             ]);
 
@@ -229,13 +236,11 @@ class UserController extends Controller
                 ],500);
             }
 
-            $user = User::where('usuario',$usuario)->first();
-
             $data = [
                 'password' => $password
             ];
 
-            Mail::to($user->mail)->send(new ResetPasword($data));
+            Mail::to($mail)->send(new ResetPasword($data));
 
             return response()->json([
                 'message' => 'Se restablecio la clave. Por favor revise su email.',

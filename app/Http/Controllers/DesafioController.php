@@ -36,6 +36,7 @@ class DesafioController extends Controller
 
                 if(!User::where('mail', $mail)->exists()){
                     $mails_invitations[] = $mail;
+                    Mail::to($mail)->send(new DesafioMail());
                 } else {
                     $user = User::where('mail', $mail)->first();
 
@@ -43,6 +44,8 @@ class DesafioController extends Controller
                         "usuario_id" => $user->id,
                         "desafio_id" => $challenge->id
                     ]);
+
+                    Mail::to($mail)->send(new DesafioMail());
 
                     /*$data = [
                         "titulo" => "Fuiste desafiado!",
