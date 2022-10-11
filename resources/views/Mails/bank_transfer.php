@@ -1,17 +1,17 @@
 <div>
-    Se ha solicitado enviar los datos para transferencia bancaria. Dichos datos son:
+    Se ha solicitado enviar los datos para transferencia bancaria.  <br> Dichos datos son:
 
     <p>
-        Matias Klassen
-        Banco ICBC
-        CBU 0150925401000119562744
+        Matias Klassen <br>
+        Banco ICBC <br>
+        CBU 0150925401000119562744 <br>
         Caja de ahorro en pesos
     </p>
 
     <p>
-        Sebastián Larramendy
-        Banco BBVA FRANCES
-        CBU 0170173540000030904729
+        Sebastián Larramendy <br>
+        Banco BBVA FRANCES <br>
+        CBU 0170173540000030904729 <br>
         Caja de ahorro en pesos
     </p>
 </div>
