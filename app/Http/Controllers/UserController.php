@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ConfirmMail;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Services\JwtService;
 use App\Mail\ResetPasword;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -244,6 +246,74 @@ class UserController extends Controller
 
             return response()->json([
                 'message' => 'Se restablecio la clave. Por favor revise su email.',
+            ]);
+        }catch(Exception $error){
+            return response()->json([
+                'message' => $error->getMessage()
+            ],500);
+        }
+    }
+
+    public function sendConfirmMail (Request $request) {
+        try {
+            if(!$request->has(['mail'])){
+                return response()->json([
+                    'message' => "Datos incompletos.",
+                ], 400);
+            }
+
+            $mail = $request->mail;
+
+            $user = User::where('mail', $mail)->first();
+            if (!$user) {
+                return response()->json([
+                    'message' => "No existe usuario con este mail",
+                ], 400);
+            }
+
+            Mail::to($mail)->send(new ConfirmMail($user));
+
+            return response()->json([
+                'message' => 'Mail enviado correctamente.'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function confirmMail (Request $request) {
+        try{
+            if(!$request->has('id')){
+                return response()->json([
+                    'message' => "Datos invalidos."
+                ],400);
+            }
+
+            $id = Crypt::decryptString($request->id);
+
+            $user = User::where('id', $id)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'El ID recibido es incorrecto'
+                ],400);
+            }
+
+            $user_updated = $user->update([
+                'confirma_mail' => 1,
+                'email_verified_at' => date('Y-m-d h:i:s')
+            ]);
+
+            if ($user_updated != 1) {
+                return response()->json([
+                    'message' => 'Error al confirmar el mail.'
+                ],500);
+            }
+
+            return response()->json([
+                'message' => 'Se confirmo correctamente su cuenta.',
             ]);
         }catch(Exception $error){
             return response()->json([

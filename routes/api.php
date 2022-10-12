@@ -43,6 +43,8 @@
         Route::post('/edit-profile', 'App\Http\Controllers\UserController@editProfile')->middleware('api-auth');
         Route::post('/register', 'App\Http\Controllers\UserController@register');
         Route::post('/reset-password', 'App\Http\Controllers\UserController@resetPassword');
+        Route::post('/send-confirm-mail', 'App\Http\Controllers\UserController@sendConfirmMail')->middleware('api-auth');
+        Route::post('/confirm-mail', 'App\Http\Controllers\UserController@confirmMail');
     });
 
     Route::prefix('tournament')->group(function () {
