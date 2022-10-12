@@ -25,6 +25,13 @@ class DesafioController extends Controller
             $user_id = JwtService::getUser()->id;
             $mails = $request->usuarios_desafiados;
 
+            $user_create = User::where('id', $user_id)->first();
+            if (!$user_create) {
+                return response()->json([
+                    'message' => "No existe el usuario que intenta crear el desafio.",
+                ], 400);
+            }
+
             $challenge = Desafio::create([
                 'nombre' => $request->nombre,
                 'usuario_creacion_id' => $user_id,
@@ -36,7 +43,7 @@ class DesafioController extends Controller
 
                 if(!User::where('mail', $mail)->exists()){
                     $mails_invitations[] = $mail;
-                    Mail::to($mail)->send(new DesafioMail());
+                    Mail::to($mail)->send(new DesafioMail($user_create));
                 } else {
                     $user = User::where('mail', $mail)->first();
 
@@ -45,7 +52,7 @@ class DesafioController extends Controller
                         "desafio_id" => $challenge->id
                     ]);
 
-                    Mail::to($mail)->send(new DesafioMail());
+                    Mail::to($mail)->send(new DesafioMail($user_create));
 
                     /*$data = [
                         "titulo" => "Fuiste desafiado!",
