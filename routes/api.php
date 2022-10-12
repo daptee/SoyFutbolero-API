@@ -94,6 +94,7 @@
         Route::get('/', 'App\Http\Controllers\UserTournametController@list')->middleware('api-auth');
         Route::post('', 'App\Http\Controllers\UserTournametController@create')->middleware('api-auth');
         Route::put('/{id}', 'App\Http\Controllers\UserTournametController@update')->middleware('api-auth');
+        Route::post('/set-payment', 'App\Http\Controllers\UserTournametController@setUserPaymentTournament')->middleware('api-auth');
         Route::delete('/{id}', 'App\Http\Controllers\UserTournametController@delete')->middleware('api-auth');
     });
 
@@ -158,4 +159,6 @@
 
     Route::prefix('payment')->group(function () {
         Route::post('/bank-transfer', 'App\Http\Controllers\PaymentController@sendBankTransferData')->middleware('api-auth');
+        // Mercado pago - preferencia
+        Route::post('/mercadopago/preference', 'App\Http\Controllers\MercadoPagoController@createPay')->middleware('api-auth');
     });

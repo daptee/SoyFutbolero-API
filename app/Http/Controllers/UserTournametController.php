@@ -57,6 +57,7 @@ class UserTournametController extends Controller
 
             $user_id = $request->user_id;
             $tournament_id = $request->tournament_id;
+            $estado_id = (isset($request->estado_id)) ? $request->estado_id : 1;
 
             $user_tournament = UserTournamet::create([
                 'id_usuario' => $user_id,
@@ -127,6 +128,43 @@ class UserTournametController extends Controller
         }
     }
 
+    public function setUserPaymentTournament (Request $request) {
+        try{
+            if(!$request->has(['id_usuario', 'id_torneo'])){
+                return response()->json([
+                    'message' => 'Datos incompletos.'
+                ],400);
+            }
+
+            $user_tornament = UserTournamet::where('id_usuario',$request->id_usuario)->where('id_torneo',$request->id_torneo)->update([
+                'id_estado' => 3
+            ]);
+
+            /*$UserTournamet = UserTournamet::whereId($id)->first();
+
+            $user_tornament = Turnament::whereId($UserTournamet->id_torneo)
+                ->orderBy('id','desc')
+                ->with('usuarios_torneo')
+                ->first();
+
+            foreach($user_tornament->usuarios_torneo as $user){
+                $user->usuario_id = $user->usuario->id;
+                $user->usuario_nombre = $user->usuario->apellido . ' '.$user->usuario->nombre;
+                $user->estado_pago_id = $user->estado->id;
+                $user->mail = $user->usuario->mail;
+                $user->estado_pago_nombre = $user->estado->nombreEstado;
+            }*/
+
+            return response()->json([
+                'message' => 'Se actualizo el registro. ',
+                'data' => $user_tornament
+            ]);
+        }catch(Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ],500);
+        }
+    }
 
     public function delete($id){
         try{
