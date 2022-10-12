@@ -33,7 +33,7 @@
             return $this->view('Mails.desafio_invitation')
                 ->subject('Te invitaron a un Desafio en SoyFutbolero.com')
                 ->with([
-                    'name' => $this->user_create['nombre'],
+                    'name' => $this->user_create->nombre,
                 ]);
         }
     }
