@@ -57,9 +57,18 @@ class UserTournametController extends Controller
 
             $user_id = $request->user_id;
             $tournament_id = $request->tournament_id;
-            $estado_id = (isset($request->estado_id)) ? $request->estado_id : 1;
+//            $estado_id = (isset($request->estado_id)) ? $request->estado_id : 1;
 
-            $user_tournament = UserTournamet::create([
+            $userTournament = UserTournamet::where('id_usuario', $user_id)->where('id_torneo', $tournament_id)->first();
+//            dd($userTournament);
+
+            if ($userTournament) {
+                return response()->json([
+                    'message' => 'El usuario ya esta registrado en el torneo'
+                ],400);
+            }
+
+            UserTournamet::create([
                 'id_usuario' => $user_id,
                 'id_torneo'  => $tournament_id
             ]);

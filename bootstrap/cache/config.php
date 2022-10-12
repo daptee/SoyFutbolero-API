@@ -1,10 +1,10 @@
 <?php return array (
-  'app' =>
+  'app' => 
   array (
-    'name' => 'SoyFutbolero',
+    'name' => 'Laravel',
     'env' => 'local',
     'debug' => true,
-    'url' => 'https://api.soyfutbolero.com',
+    'url' => 'http://127.0.0.1:8000',
     'asset_url' => NULL,
     'timezone' => 'UTC',
     'locale' => 'en',
@@ -12,7 +12,7 @@
     'faker_locale' => 'en_US',
     'key' => 'base64:4pzqBeMJDav73fSzvdvObh1fZot45yZ9e2rmrELQ49k=',
     'cipher' => 'AES-256-CBC',
-    'providers' =>
+    'providers' => 
     array (
       0 => 'Illuminate\\Auth\\AuthServiceProvider',
       1 => 'Illuminate\\Broadcasting\\BroadcastServiceProvider',
@@ -41,7 +41,7 @@
       24 => 'App\\Providers\\EventServiceProvider',
       25 => 'App\\Providers\\RouteServiceProvider',
     ),
-    'aliases' =>
+    'aliases' => 
     array (
       'App' => 'Illuminate\\Support\\Facades\\App',
       'Arr' => 'Illuminate\\Support\\Arr',
@@ -83,37 +83,37 @@
       'View' => 'Illuminate\\Support\\Facades\\View',
     ),
   ),
-  'auth' =>
+  'auth' => 
   array (
-    'defaults' =>
+    'defaults' => 
     array (
       'guard' => 'api',
       'passwords' => 'users',
     ),
-    'guards' =>
+    'guards' => 
     array (
-      'api' =>
+      'api' => 
       array (
         'driver' => 'jwt',
         'provider' => 'users',
       ),
-      'sanctum' =>
+      'sanctum' => 
       array (
         'driver' => 'sanctum',
         'provider' => NULL,
       ),
     ),
-    'providers' =>
+    'providers' => 
     array (
-      'users' =>
+      'users' => 
       array (
         'driver' => 'eloquent',
         'model' => 'App\\Models\\User',
       ),
     ),
-    'passwords' =>
+    'passwords' => 
     array (
-      'users' =>
+      'users' => 
       array (
         'provider' => 'users',
         'table' => 'password_resets',
@@ -123,84 +123,84 @@
     ),
     'password_timeout' => 10800,
   ),
-  'broadcasting' =>
+  'broadcasting' => 
   array (
     'default' => 'log',
-    'connections' =>
+    'connections' => 
     array (
-      'pusher' =>
+      'pusher' => 
       array (
         'driver' => 'pusher',
         'key' => '',
         'secret' => '',
         'app_id' => '',
-        'options' =>
+        'options' => 
         array (
           'cluster' => 'mt1',
           'useTLS' => true,
         ),
       ),
-      'ably' =>
+      'ably' => 
       array (
         'driver' => 'ably',
         'key' => NULL,
       ),
-      'redis' =>
+      'redis' => 
       array (
         'driver' => 'redis',
         'connection' => 'default',
       ),
-      'log' =>
+      'log' => 
       array (
         'driver' => 'log',
       ),
-      'null' =>
+      'null' => 
       array (
         'driver' => 'null',
       ),
     ),
   ),
-  'cache' =>
+  'cache' => 
   array (
     'default' => 'file',
-    'stores' =>
+    'stores' => 
     array (
-      'apc' =>
+      'apc' => 
       array (
         'driver' => 'apc',
       ),
-      'array' =>
+      'array' => 
       array (
         'driver' => 'array',
         'serialize' => false,
       ),
-      'database' =>
+      'database' => 
       array (
         'driver' => 'database',
         'table' => 'cache',
         'connection' => NULL,
         'lock_connection' => NULL,
       ),
-      'file' =>
+      'file' => 
       array (
         'driver' => 'file',
-        'path' => '/home2/dapteesfcom/api.soyfutbolero.com/storage/framework/cache/data',
+        'path' => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\storage\\framework/cache/data',
       ),
-      'memcached' =>
+      'memcached' => 
       array (
         'driver' => 'memcached',
         'persistent_id' => NULL,
-        'sasl' =>
+        'sasl' => 
         array (
           0 => NULL,
           1 => NULL,
         ),
-        'options' =>
+        'options' => 
         array (
         ),
-        'servers' =>
+        'servers' => 
         array (
-          0 =>
+          0 => 
           array (
             'host' => '127.0.0.1',
             'port' => 11211,
@@ -208,13 +208,13 @@
           ),
         ),
       ),
-      'redis' =>
+      'redis' => 
       array (
         'driver' => 'redis',
         'connection' => 'cache',
         'lock_connection' => 'default',
       ),
-      'dynamodb' =>
+      'dynamodb' => 
       array (
         'driver' => 'dynamodb',
         'key' => '',
@@ -223,63 +223,63 @@
         'table' => 'cache',
         'endpoint' => NULL,
       ),
-      'octane' =>
+      'octane' => 
       array (
         'driver' => 'octane',
       ),
     ),
-    'prefix' => 'soyfutbolero_cache',
+    'prefix' => 'laravel_cache',
   ),
-  'cors' =>
+  'cors' => 
   array (
-    'paths' =>
+    'paths' => 
     array (
       0 => 'api/*',
       1 => 'sanctum/csrf-cookie',
     ),
-    'allowed_methods' =>
+    'allowed_methods' => 
     array (
       0 => '*',
     ),
-    'allowed_origins' =>
+    'allowed_origins' => 
     array (
       0 => '*',
     ),
-    'allowed_origins_patterns' =>
+    'allowed_origins_patterns' => 
     array (
     ),
-    'allowed_headers' =>
+    'allowed_headers' => 
     array (
       0 => '*',
     ),
-    'exposed_headers' =>
+    'exposed_headers' => 
     array (
     ),
     'max_age' => 0,
     'supports_credentials' => false,
   ),
-  'database' =>
+  'database' => 
   array (
     'default' => 'mysql',
-    'connections' =>
+    'connections' => 
     array (
-      'sqlite' =>
+      'sqlite' => 
       array (
         'driver' => 'sqlite',
         'url' => NULL,
-        'database' => 'dapteesf_soyfutbolero',
+        'database' => 'soyfutbolero',
         'prefix' => '',
         'foreign_key_constraints' => true,
       ),
-      'mysql' =>
+      'mysql' => 
       array (
         'driver' => 'mysql',
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'dapteesf_soyfutbolero',
-        'username' => 'dapteesf_bduser',
-        'password' => 'dapteesf_bdpass',
+        'database' => 'soyfutbolero',
+        'username' => 'root',
+        'password' => '',
         'unix_socket' => '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
@@ -287,49 +287,49 @@
         'prefix_indexes' => true,
         'strict' => true,
         'engine' => NULL,
-        'options' =>
+        'options' => 
         array (
         ),
       ),
-      'pgsql' =>
+      'pgsql' => 
       array (
         'driver' => 'pgsql',
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'dapteesf_soyfutbolero',
-        'username' => 'dapteesf_bduser',
-        'password' => 'dapteesf_bdpass',
+        'database' => 'soyfutbolero',
+        'username' => 'root',
+        'password' => '',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
         'schema' => 'public',
         'sslmode' => 'prefer',
       ),
-      'sqlsrv' =>
+      'sqlsrv' => 
       array (
         'driver' => 'sqlsrv',
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'dapteesf_soyfutbolero',
-        'username' => 'dapteesf_bduser',
-        'password' => 'dapteesf_bdpass',
+        'database' => 'soyfutbolero',
+        'username' => 'root',
+        'password' => '',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
       ),
     ),
     'migrations' => 'migrations',
-    'redis' =>
+    'redis' => 
     array (
       'client' => 'phpredis',
-      'options' =>
+      'options' => 
       array (
         'cluster' => 'redis',
-        'prefix' => 'soyfutbolero_database_',
+        'prefix' => 'laravel_database_',
       ),
-      'default' =>
+      'default' => 
       array (
         'url' => NULL,
         'host' => '127.0.0.1',
@@ -337,7 +337,7 @@
         'port' => '6379',
         'database' => '0',
       ),
-      'cache' =>
+      'cache' => 
       array (
         'url' => NULL,
         'host' => '127.0.0.1',
@@ -347,31 +347,31 @@
       ),
     ),
   ),
-  'filesystems' =>
+  'filesystems' => 
   array (
     'default' => 'local',
-    'disks' =>
+    'disks' => 
     array (
-      'local' =>
+      'local' => 
       array (
         'driver' => 'local',
-        'root' => '/home2/dapteesfcom/api.soyfutbolero.com/storage/app',
+        'root' => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\storage\\app',
       ),
-      'public' =>
+      'public' => 
       array (
         'driver' => 'local',
-        'root' => '/home2/dapteesfcom/api.soyfutbolero.com/storage/app/public',
-        'url' => 'https://api.soyfutbolero.com/storage',
+        'root' => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\storage\\app/public',
+        'url' => 'http://127.0.0.1:8000/storage',
         'visibility' => 'public',
       ),
-      'public_proyect' =>
+      'public_proyect' => 
       array (
         'driver' => 'local',
-        'root' => '/home2/dapteesfcom/api.soyfutbolero.com/public/storage',
-        'url' => 'https://api.soyfutbolero.com/storage',
+        'root' => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\public\\storage',
+        'url' => 'http://127.0.0.1:8000/storage',
         'visibility' => 'public',
       ),
-      's3' =>
+      's3' => 
       array (
         'driver' => 's3',
         'key' => '',
@@ -383,29 +383,29 @@
         'use_path_style_endpoint' => false,
       ),
     ),
-    'links' =>
+    'links' => 
     array (
-      '/home2/dapteesfcom/api.soyfutbolero.com/public/storage' => '/home2/dapteesfcom/api.soyfutbolero.com/storage/app/public',
+      'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\public\\storage' => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\storage\\app/public',
     ),
   ),
-  'hashing' =>
+  'hashing' => 
   array (
     'driver' => 'bcrypt',
-    'bcrypt' =>
+    'bcrypt' => 
     array (
       'rounds' => 10,
     ),
-    'argon' =>
+    'argon' => 
     array (
       'memory' => 65536,
       'threads' => 1,
       'time' => 4,
     ),
   ),
-  'jwt' =>
+  'jwt' => 
   array (
     'secret' => 'sClEwG5YtsoxekRFgu1qDNJH5iPoUzU3M0DQvM5vjL3cDItbw2FVWCYXDHH8FsIJ',
-    'keys' =>
+    'keys' => 
     array (
       'public' => NULL,
       'private' => NULL,
@@ -414,7 +414,7 @@
     'ttl' => 6000000,
     'refresh_ttl' => 20160,
     'algo' => 'HS256',
-    'required_claims' =>
+    'required_claims' => 
     array (
       0 => 'iss',
       1 => 'iat',
@@ -423,7 +423,7 @@
       4 => 'sub',
       5 => 'jti',
     ),
-    'persistent_claims' =>
+    'persistent_claims' => 
     array (
     ),
     'lock_subject' => true,
@@ -431,42 +431,42 @@
     'blacklist_enabled' => true,
     'blacklist_grace_period' => 0,
     'decrypt_cookies' => false,
-    'providers' =>
+    'providers' => 
     array (
       'jwt' => 'Tymon\\JWTAuth\\Providers\\JWT\\Lcobucci',
       'auth' => 'Tymon\\JWTAuth\\Providers\\Auth\\Illuminate',
       'storage' => 'Tymon\\JWTAuth\\Providers\\Storage\\Illuminate',
     ),
   ),
-  'logging' =>
+  'logging' => 
   array (
     'default' => 'stack',
     'deprecations' => NULL,
-    'channels' =>
+    'channels' => 
     array (
-      'stack' =>
+      'stack' => 
       array (
         'driver' => 'stack',
-        'channels' =>
+        'channels' => 
         array (
           0 => 'single',
         ),
         'ignore_exceptions' => false,
       ),
-      'single' =>
+      'single' => 
       array (
         'driver' => 'single',
-        'path' => '/home2/dapteesfcom/api.soyfutbolero.com/storage/logs/laravel.log',
+        'path' => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\storage\\logs/laravel.log',
         'level' => 'debug',
       ),
-      'daily' =>
+      'daily' => 
       array (
         'driver' => 'daily',
-        'path' => '/home2/dapteesfcom/api.soyfutbolero.com/storage/logs/laravel.log',
+        'path' => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\storage\\logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
       ),
-      'slack' =>
+      'slack' => 
       array (
         'driver' => 'slack',
         'url' => NULL,
@@ -474,125 +474,125 @@
         'emoji' => ':boom:',
         'level' => 'debug',
       ),
-      'papertrail' =>
+      'papertrail' => 
       array (
         'driver' => 'monolog',
         'level' => 'debug',
         'handler' => 'Monolog\\Handler\\SyslogUdpHandler',
-        'handler_with' =>
+        'handler_with' => 
         array (
           'host' => NULL,
           'port' => NULL,
         ),
       ),
-      'stderr' =>
+      'stderr' => 
       array (
         'driver' => 'monolog',
         'level' => 'debug',
         'handler' => 'Monolog\\Handler\\StreamHandler',
         'formatter' => NULL,
-        'with' =>
+        'with' => 
         array (
           'stream' => 'php://stderr',
         ),
       ),
-      'syslog' =>
+      'syslog' => 
       array (
         'driver' => 'syslog',
         'level' => 'debug',
       ),
-      'errorlog' =>
+      'errorlog' => 
       array (
         'driver' => 'errorlog',
         'level' => 'debug',
       ),
-      'null' =>
+      'null' => 
       array (
         'driver' => 'monolog',
         'handler' => 'Monolog\\Handler\\NullHandler',
       ),
-      'emergency' =>
+      'emergency' => 
       array (
-        'path' => '/home2/dapteesfcom/api.soyfutbolero.com/storage/logs/laravel.log',
+        'path' => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\storage\\logs/laravel.log',
       ),
     ),
   ),
-  'mail' =>
+  'mail' => 
   array (
     'default' => 'smtp',
-    'mailers' =>
+    'mailers' => 
     array (
-      'smtp' =>
+      'smtp' => 
       array (
         'transport' => 'smtp',
-        'host' => 'mail.soyfutbolero.com',
-        'port' => '465',
-        'encryption' => 'ssl',
-        'username' => 'info@soyfutbolero.com',
-        'password' => '[$&{.SE=yhoD',
+        'host' => 'mailhog',
+        'port' => '1025',
+        'encryption' => NULL,
+        'username' => NULL,
+        'password' => NULL,
         'timeout' => NULL,
         'auth_mode' => NULL,
       ),
-      'ses' =>
+      'ses' => 
       array (
         'transport' => 'ses',
       ),
-      'mailgun' =>
+      'mailgun' => 
       array (
         'transport' => 'mailgun',
       ),
-      'postmark' =>
+      'postmark' => 
       array (
         'transport' => 'postmark',
       ),
-      'sendmail' =>
+      'sendmail' => 
       array (
         'transport' => 'sendmail',
         'path' => '/usr/sbin/sendmail -t -i',
       ),
-      'log' =>
+      'log' => 
       array (
         'transport' => 'log',
         'channel' => NULL,
       ),
-      'array' =>
+      'array' => 
       array (
         'transport' => 'array',
       ),
-      'failover' =>
+      'failover' => 
       array (
         'transport' => 'failover',
-        'mailers' =>
+        'mailers' => 
         array (
           0 => 'smtp',
           1 => 'log',
         ),
       ),
     ),
-    'from' =>
+    'from' => 
     array (
-      'address' => 'info@soyfutbolero.com',
-      'name' => 'SoyFutbolero',
+      'address' => NULL,
+      'name' => 'Laravel',
     ),
-    'markdown' =>
+    'markdown' => 
     array (
       'theme' => 'default',
-      'paths' =>
+      'paths' => 
       array (
-        0 => '/home2/dapteesfcom/api.soyfutbolero.com/resources/views/vendor/mail',
+        0 => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\resources\\views/vendor/mail',
       ),
     ),
   ),
-  'queue' =>
+  'queue' => 
   array (
     'default' => 'sync',
-    'connections' =>
+    'connections' => 
     array (
-      'sync' =>
+      'sync' => 
       array (
         'driver' => 'sync',
       ),
-      'database' =>
+      'database' => 
       array (
         'driver' => 'database',
         'table' => 'jobs',
@@ -600,7 +600,7 @@
         'retry_after' => 90,
         'after_commit' => false,
       ),
-      'beanstalkd' =>
+      'beanstalkd' => 
       array (
         'driver' => 'beanstalkd',
         'host' => 'localhost',
@@ -609,7 +609,7 @@
         'block_for' => 0,
         'after_commit' => false,
       ),
-      'sqs' =>
+      'sqs' => 
       array (
         'driver' => 'sqs',
         'key' => '',
@@ -620,7 +620,7 @@
         'region' => 'us-east-1',
         'after_commit' => false,
       ),
-      'redis' =>
+      'redis' => 
       array (
         'driver' => 'redis',
         'connection' => 'default',
@@ -630,101 +630,101 @@
         'after_commit' => false,
       ),
     ),
-    'failed' =>
+    'failed' => 
     array (
       'driver' => 'database-uuids',
       'database' => 'mysql',
       'table' => 'failed_jobs',
     ),
   ),
-  'sanctum' =>
+  'sanctum' => 
   array (
-    'stateful' =>
+    'stateful' => 
     array (
       0 => 'localhost',
       1 => 'localhost:3000',
       2 => '127.0.0.1',
       3 => '127.0.0.1:8000',
       4 => '::1',
-      5 => 'api.soyfutbolero.com',
+      5 => '127.0.0.1',
     ),
-    'guard' =>
+    'guard' => 
     array (
       0 => 'web',
     ),
     'expiration' => NULL,
-    'middleware' =>
+    'middleware' => 
     array (
       'verify_csrf_token' => 'App\\Http\\Middleware\\VerifyCsrfToken',
       'encrypt_cookies' => 'App\\Http\\Middleware\\EncryptCookies',
     ),
   ),
-  'services' =>
+  'services' => 
   array (
-    'mailgun' =>
+    'mailgun' => 
     array (
       'domain' => NULL,
       'secret' => NULL,
       'endpoint' => 'api.mailgun.net',
     ),
-    'postmark' =>
+    'postmark' => 
     array (
       'token' => NULL,
     ),
-    'ses' =>
+    'ses' => 
     array (
       'key' => '',
       'secret' => '',
       'region' => 'us-east-1',
     ),
-    'mercadopago' =>
+    'mercadopago' => 
     array (
-      'dev' =>
+      'dev' => 
       array (
         'key' => 'TEST-15b6a922-637e-4914-8472-ac2d5205697b',
         'token' => 'TEST-831282737171302-101118-c763898735c4c9850862081823b79ba7-93258776',
       ),
-      'prod' =>
+      'prod' => 
       array (
         'key' => 'APP_USR-914b170c-a196-442a-8081-059d79ca3a23',
         'token' => 'APP_USR-831282737171302-101118-bb31a4e604f0471bfd1808159432817f-93258776',
       ),
     ),
   ),
-  'session' =>
+  'session' => 
   array (
     'driver' => 'file',
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => '/home2/dapteesfcom/api.soyfutbolero.com/storage/framework/sessions',
+    'files' => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\storage\\framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
-    'lottery' =>
+    'lottery' => 
     array (
       0 => 2,
       1 => 100,
     ),
-    'cookie' => 'soyfutbolero_session',
+    'cookie' => 'laravel_session',
     'path' => '/',
     'domain' => NULL,
     'secure' => NULL,
     'http_only' => true,
     'same_site' => 'lax',
   ),
-  'view' =>
+  'view' => 
   array (
-    'paths' =>
+    'paths' => 
     array (
-      0 => '/home2/dapteesfcom/api.soyfutbolero.com/resources/views',
+      0 => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\resources\\views',
     ),
-    'compiled' => '/home2/dapteesfcom/api.soyfutbolero.com/storage/framework\\views',
+    'compiled' => 'C:\\wamp64\\www\\projects\\SoyFutbolero\\API\\storage\\framework\\views',
   ),
-  'flare' =>
+  'flare' => 
   array (
     'key' => NULL,
-    'reporting' =>
+    'reporting' => 
     array (
       'anonymize_ips' => true,
       'collect_git_information' => false,
@@ -735,24 +735,24 @@
       'grouping_type' => NULL,
       'report_logs' => true,
       'maximum_number_of_collected_logs' => 200,
-      'censor_request_body_fields' =>
+      'censor_request_body_fields' => 
       array (
         0 => 'password',
       ),
     ),
     'send_logs_as_events' => true,
-    'censor_request_body_fields' =>
+    'censor_request_body_fields' => 
     array (
       0 => 'password',
     ),
   ),
-  'ignition' =>
+  'ignition' => 
   array (
     'editor' => 'phpstorm',
     'theme' => 'light',
     'enable_share_button' => true,
     'register_commands' => false,
-    'ignored_solution_providers' =>
+    'ignored_solution_providers' => 
     array (
       0 => 'Facade\\Ignition\\SolutionProviders\\MissingPackageSolutionProvider',
     ),
@@ -761,15 +761,15 @@
     'local_sites_path' => '',
     'housekeeping_endpoint_prefix' => '_ignition',
   ),
-  'tinker' =>
+  'tinker' => 
   array (
-    'commands' =>
+    'commands' => 
     array (
     ),
-    'alias' =>
+    'alias' => 
     array (
     ),
-    'dont_alias' =>
+    'dont_alias' => 
     array (
       0 => 'App\\Nova',
     ),

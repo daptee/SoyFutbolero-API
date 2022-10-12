@@ -460,7 +460,9 @@ class TournamentController extends Controller
 
             $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
             $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
-            $tournament->user_table = (array)$this->calculateTournamentPoints($tournament->id);
+            $dataUsers = (array)$this->calculateTournamentPoints($tournament->id);
+            $tournament->user_table = $dataUsers['user_table'];
+            $tournament->user_register = $dataUsers['user_register'];
 
             foreach($tournament->torneoFase as $tournament_stage){
                 $match_query = Match::query();
@@ -502,76 +504,85 @@ class TournamentController extends Controller
 
     private function calculateTournamentPoints($tournament_id){
         $matchs             = Match::where('id_torneo', $tournament_id)->with('prediccion')->get();
-        $users_tournament   = UserTournamet::where("id_torneo", $tournament_id)->where('id_estado',3)->with(['usuario', 'usuario.genero'])->get();
+        $users_tournament   = UserTournamet::where("id_torneo", $tournament_id)->with(['usuario', 'usuario.genero'])->get();
 //        $users_ids          = $users_tournament->pluck('usuario.id');
 //        $matchs_ids         = $matchs->pluck('id');
 //        $users_predictions  = UserPrediction::whereIn("id_usuario",$users_ids  )->whereIn("id_partido",$matchs_ids)->get();
 
         $users_table = [];
+        $users_register_not_pay = [];
 
         foreach($users_tournament as $user){
-
             $path = 'users/'.$user->usuario->id;
 
-            $user_table = [
-                "usuario_id"        => $user->usuario->id,
-                "nombre"            => $user->usuario->nombre,
-                "apellido"          => $user->usuario->apellido,
-                "genero"            => $user->usuario->genero,
-                "foto_url"          => Storage::disk('public_proyect')->exists($path.'/'.$user->usuario->foto) ? self::BASEPATH . $path.'/'.$user->usuario->foto : self::BASEPATH . 'defaults-image/sin-imagen.png',
-                "total_acertados"   => 0,
-                "total_errados"     => 0,
-                "puntos"            => 0
-            ];
-            foreach($matchs as $match){
+            if ($user->id_estado === 3) {
+                $user_table = [
+                    "usuario_id"        => $user->usuario->id,
+                    "nombre"            => $user->usuario->nombre,
+                    "apellido"          => $user->usuario->apellido,
+                    "genero"            => $user->usuario->genero,
+                    "foto_url"          => Storage::disk('public_proyect')->exists($path.'/'.$user->usuario->foto) ? self::BASEPATH . $path.'/'.$user->usuario->foto : self::BASEPATH . 'defaults-image/sin-imagen.png',
+                    "total_acertados"   => 0,
+                    "total_errados"     => 0,
+                    "puntos"            => 0
+                ];
 
-                # Se suma puntos de los partidos que estan como finalizados.
-                if($match->id_estado != 4){
-                    continue;
-                }
+                foreach($matchs as $match){
 
-                $user_prediction = null;
-                foreach($match->prediccion as $prediccion) {
-                    if ($prediccion->id_usuario === $user->usuario->id) {
-                        $user_prediction = $prediccion;
-                        break;
+                    # Se suma puntos de los partidos que estan como finalizados.
+                    if($match->id_estado != 4){
+                        continue;
                     }
-                }
+
+                    $user_prediction = null;
+                    foreach($match->prediccion as $prediccion) {
+                        if ($prediccion->id_usuario === $user->usuario->id) {
+                            $user_prediction = $prediccion;
+                            break;
+                        }
+                    }
 
 //                $user_prediction =  $users_predictions->where('id_usuario', $user->usuario->id)->where('id_partido', $match->id)->first();
 
-                # Usuario no cargo prediccion
-                if(!$user_prediction){
-                    $user_table["total_errados"]++;
-                    continue;
-                }
-
-                # Verificamos si acerto el resultado
-                if( (($match->goles_1 ==  $match->goles_2)  && ($user_prediction->goles_1 == $user_prediction->goles_2)) ||
-                (($match->goles_1 >  $match->goles_2)  && ($user_prediction->goles_1 > $user_prediction->goles_2)) ||
-                (($match->goles_1 <  $match->goles_2)  && ($user_prediction->goles_1 < $user_prediction->goles_2)) ){
-                    $user_table["total_acertados"]++;
-
-                    $real_total_gol = $match->goles_1 + $match->goles_2;
-                    $predictions_total_gol = $user_prediction->goles_1 + $user_prediction->goles_2;
-
-                    $diferencia_goles = abs($real_total_gol -  $predictions_total_gol);
-
-                    if( $diferencia_goles == 0){
-                        $user_table["puntos"] += 10;
-                    } else {
-                        $user_table["puntos"] = $diferencia_goles > 5 ? ($user_table["puntos"] + 5) :  ($user_table["puntos"] + (10 - $diferencia_goles));
+                    # Usuario no cargo prediccion
+                    if(!$user_prediction){
+                        $user_table["total_errados"]++;
+                        continue;
                     }
 
-                } else {
-                    $user_table["total_errados"]++;
+                    # Verificamos si acerto el resultado
+                    if( (($match->goles_1 ==  $match->goles_2)  && ($user_prediction->goles_1 == $user_prediction->goles_2)) ||
+                        (($match->goles_1 >  $match->goles_2)  && ($user_prediction->goles_1 > $user_prediction->goles_2)) ||
+                        (($match->goles_1 <  $match->goles_2)  && ($user_prediction->goles_1 < $user_prediction->goles_2)) ){
+                        $user_table["total_acertados"]++;
+
+                        $real_total_gol = $match->goles_1 + $match->goles_2;
+                        $predictions_total_gol = $user_prediction->goles_1 + $user_prediction->goles_2;
+
+                        $diferencia_goles = abs($real_total_gol -  $predictions_total_gol);
+
+                        if( $diferencia_goles == 0){
+                            $user_table["puntos"] += 10;
+                        } else {
+                            $user_table["puntos"] = $diferencia_goles > 5 ? ($user_table["puntos"] + 5) :  ($user_table["puntos"] + (10 - $diferencia_goles));
+                        }
+
+                    } else {
+                        $user_table["total_errados"]++;
+                    }
+
                 }
 
+                $users_table[] = $user_table;
+            } else {
+                $users_register_not_pay[] = $user;
             }
-
-            $users_table[] = $user_table;
         }
 
-        return $users_table;
+        return array(
+            "user_table"    => $users_table,
+            "user_register" => $users_register_not_pay
+        );
+//        return $users_table;
     }
 }
