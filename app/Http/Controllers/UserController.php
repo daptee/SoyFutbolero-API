@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ConfirmMail;
+use App\Models\DesafioUsuario;
+use App\Models\Turnament;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Services\JwtService;
@@ -186,9 +188,25 @@ class UserController extends Controller
             $password = $data['password'];
             $data['password'] = bcrypt($password);
 
-            $user = User::create($data);
+            $userCreated = User::create($data);
 
-            $user = User::where('id',$user->id)->with(['genero'])->first();
+//            DesafioUsuario::update(['usuario_mail', $data['mail']], ['usuario_id', $userCreated->id]);
+            DesafioUsuario::where('usuario_mail', $data['mail'])->update(['usuario_id' => $userCreated->id]);
+
+            Mail::to($data['mail'])->send(new ConfirmMail($userCreated));
+
+//            $user = User::where('id',$user->id)->with(['genero'])->first();
+            // TRAIGO TODA LA MISMA INFO QUE AL HACER LOGIN
+            $user = User::where('id',$userCreated->id)->with(['genero', 'usuarios_torneo', 'usuarios_torneo.estado'])->first();
+            $path = 'users/'.$user->id;
+            $user->foto_url = Storage::disk('public_proyect')->exists($path.'/'.$user->foto) ? self::BASEPATH . $path.'/'.$user->foto : self::BASEPATH . 'defaults-image/sin-imagen.png';
+
+            foreach($user->usuarios_torneo as $usuarioTorneo) {
+                $tournament = Turnament::whereId($usuarioTorneo->id_torneo)->first();
+                $file_path =  'tournaments/'. $tournament->id . '/' . $tournament->directorio;
+                $tournament->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
+                $usuarioTorneo->torneo = $tournament;
+            }
 
             $credentials = [
                 'usuario' => $user->usuario,
@@ -197,9 +215,9 @@ class UserController extends Controller
 
             $token = auth()->attempt($credentials);
 
-            $data = array_merge($this->respondWithToken($token),[ 'message' => 'Usuario creado con exito.', 'usuario' => $user ], );
-
-            return response()->json($data);
+//            $data = array_merge($this->respondWithToken($token),[ 'message' => 'Usuario creado con exito.', 'usuario' => $user ], );
+//            return response()->json($data);
+            return $this->respondWithToken($token,$user);
         }catch(Exception $error){
             return response()->json([
                 'message' => $error->getMessage()
@@ -322,15 +340,16 @@ class UserController extends Controller
         }
     }
 
-    protected function respondWithToken($token){
+    protected function respondWithToken($token, $user){
         $expire_in = config('jwt.ttl');
 
-        return[
-            'message' => 'Login exitoso.',
+        return response()->json([
+            'message' => 'Registro exitoso.',
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'expires_in' => $expire_in * 60
-        ];
+            'expires_in' => $expire_in * 60,
+            'usuario' =>  $user
+        ]);
     }
 
 }

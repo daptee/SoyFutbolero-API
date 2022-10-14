@@ -14,7 +14,8 @@ class DesafioUsuario extends Model
     protected $fillable = [
         'usuario_id',
         'desafio_id',
-        'estado'
+        'estado',
+        'usuario_mail'
     ];
 
     protected $hidden = [

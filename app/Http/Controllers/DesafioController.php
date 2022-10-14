@@ -38,10 +38,15 @@ class DesafioController extends Controller
                 'torneo_id' => $request->torneo_id
             ]);
 
-            $mails_invitations = [];
+//            $mails_invitations = [];
             foreach($mails as $mail){
 
-                if(!User::where('mail', $mail)->exists()){
+                $userId = null;
+                if (User::where('mail', $mail)->exists()) {
+                    $user = User::where('mail', $mail)->first();
+                    $userId = $user->id;
+                }
+                /*if(!User::where('mail', $mail)->exists()){
                     $mails_invitations[] = $mail;
                     Mail::to($mail)->send(new DesafioMail($user_create));
                 } else {
@@ -49,26 +54,25 @@ class DesafioController extends Controller
 
                     DesafioUsuario::create([
                         "usuario_id" => $user->id,
-                        "desafio_id" => $challenge->id
+                        "desafio_id" => $challenge->id,
+                        "usuario_mail"  => $mail
                     ]);
 
                     Mail::to($mail)->send(new DesafioMail($user_create));
+                }*/
 
-                    /*$data = [
-                        "titulo" => "Fuiste desafiado!",
-                        "mensaje" => "Ve a tu menu de desafios para aceptar!",
-                        "usuario_id"  => $user->id
-                    ];
 
-                    Notification::create($data);*/
-                }
+                DesafioUsuario::create([
+                    "usuario_id" => $userId,
+                    "desafio_id" => $challenge->id,
+                    "usuario_mail"  => $mail
+                ]);
+
+                Mail::to($mail)->send(new DesafioMail($user_create));
 
             }
-//            Mail::to($mails_invitations)->send(new DesafioMail());
-//            $challenge = Desafio::where("id",$challenge->id)->with('usuarios_desafio','estado')->first();
-//            $challenge->invitations = $mails_invitations;
 
-            $challengeCreated = Desafio::where('id',$challenge->id)->with(['usuarios_desafio','estado', 'torneo'])->first();
+            $challengeCreated = Desafio::where('id',$challenge->id)->with(['usuarios_desafio','estado', 'torneo', 'usuario'])->first();
 
             return response()->json([
                 'message' => 'Desafio creado con exito.',
@@ -93,7 +97,7 @@ class DesafioController extends Controller
                 "desafio_estado_id" =>  $request->estado
             ]);
 
-            $challenge = Desafio::where("id",$id)->with('usuarios_desafio','estado')->first();
+            $challenge = Desafio::where("id",$id)->with('usuarios_desafio','estado', 'usuario')->first();
 
             return response()->json([
                 'message' => 'Desafio actualizado con exito.',
