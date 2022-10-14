@@ -38,4 +38,8 @@ class Desafio extends Model
     public function torneo(){
         return $this->belongsTo(Turnament::class,'torneo_id');
     }
+
+    public function usuario(){
+        return $this->belongsTo(User::class,'usuario_creacion_id');
+    }
 }

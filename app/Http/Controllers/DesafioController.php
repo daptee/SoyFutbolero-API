@@ -111,12 +111,12 @@ class DesafioController extends Controller
             $user_id = JwtService::getUser()->id;
 
             $challenge_user_create = Desafio::where("usuario_creacion_id", $user_id)
-            ->with(['usuarios_desafio','estado']);
+            ->with(['usuarios_desafio','estado', 'usuario']);
 
             $challenge_user_invitated = Desafio::whereHas("usuarios_desafio",function($query) use ($user_id){
                 $query->where('usuario_id', $user_id);
             })
-            ->with('usuarios_desafio','estado', 'torneo')->union($challenge_user_create)->orderBy('id','desc')->get();
+            ->with('usuarios_desafio','estado', 'torneo', 'usuario')->union($challenge_user_create)->orderBy('id','desc')->get();
 
             return response()->json([
                 'message' => 'Desafio actualizado con exito.',
