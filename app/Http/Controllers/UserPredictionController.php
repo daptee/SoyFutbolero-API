@@ -95,8 +95,8 @@ class UserPredictionController extends Controller
                 $file_path = $match->equipo_visitante->tipo->id == 1 ? 'teams/' . $match->equipo_visitante->id . '/' . $match->equipo_visitante->escudo : 'teams/' . $match->equipo_visitante->id . '/' . $match->equipo_visitante->bandera;
                 $match->equipo_visitante->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
-                $file_path = 'stadiums/' . $match->estadio->id . '/' . $match->estadio->foto;
-                $match->estadio->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
+//                $file_path = 'stadiums/' . $match->estadio->id . '/' . $match->estadio->foto;
+//                $match->estadio->image_url = Storage::disk('public_proyect')->exists($file_path) ? self::BASEPATH . $file_path : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
                 $match->usuario_prediccion = UserPrediction::where("id_usuario",$user_id  )->where("id_partido",$match->id)->first();
             }
