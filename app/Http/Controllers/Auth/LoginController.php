@@ -73,10 +73,19 @@ class LoginController extends Controller
     public function apiLogin(Request $request){
         $credentials = $request->only('usuario', 'password');
 
-        if (! $token = auth()->attempt($credentials))
+        $user = User::where('usuario',$credentials['usuario'])->orWhere('mail',$credentials['usuario'])->with(['genero', 'usuarios_torneo', 'usuarios_torneo.estado'])->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuario y/o clave no válidos.'], 400);
+        }
+
+        if (! $token = auth()->attempt(array(
+            'usuario'   => $user->usuario,
+            'password'  => $credentials['password']
+        )))
             return response()->json(['message' => 'Usuario y/o clave no válidos.'], 400);
 
-        $user = User::where('usuario',$credentials['usuario'])->with(['genero', 'usuarios_torneo', 'usuarios_torneo.estado'])->first();
+        $user = User::where('mail',$credentials['usuario'])->orWhere('usuario',$credentials['usuario'])->with(['genero', 'usuarios_torneo', 'usuarios_torneo.estado'])->first();
         $path = 'users/'.$user->id;
         $user->foto_url = Storage::disk('public_proyect')->exists($path.'/'.$user->foto) ? self::BASEPATH . $path.'/'.$user->foto : self::BASEPATH . 'defaults-image/sin-imagen.png';
 
