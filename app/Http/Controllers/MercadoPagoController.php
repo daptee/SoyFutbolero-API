@@ -19,9 +19,9 @@ class MercadoPagoController extends Controller
         // Crea un objeto de preferencia
         $preference = new MercadoPago\Preference();
         $preference->back_urls = array(
-            "success" => "http://192.168.0.103:3000/payment/success",
-            "failure" => "http://192.168.0.103:3000/payment/failure",
-            "pending" => "http://192.168.0.103:3000/payment/pending"
+            "success" => "https://prode.soyfutbolero.com/payment/success",
+            "failure" => "https://prode.soyfutbolero.com/payment/failure",
+            "pending" => "https://prode.soyfutbolero.com/payment/pending"
         );
         $preference->auto_return = "approved";
 
