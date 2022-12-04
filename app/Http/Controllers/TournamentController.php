@@ -574,10 +574,18 @@
                                 (($match->goles_1 < $match->goles_2) && ($user_prediction->goles_1 < $user_prediction->goles_2))) {
                                 $user_table["total_acertados"]++;
 
-                                $real_total_gol = $match->goles_1 + $match->goles_2;
-                                $predictions_total_gol = $user_prediction->goles_1 + $user_prediction->goles_2;
-
-                                $diferencia_goles = abs($real_total_gol - $predictions_total_gol);
+//                                $real_total_gol = $match->goles_1 + $match->goles_2;
+//                                $predictions_total_gol = $user_prediction->goles_1 + $user_prediction->goles_2;
+//                                $diferencia_goles = abs($real_total_gol - $predictions_total_gol);
+                                $diff1 = $match->goles_1 - $user_prediction->goles_1;
+                                if ($diff1 < 0) {
+                                    $diff1 = $diff1 * (-1);
+                                }
+                                $diff2 = $match->goles_ - $user_prediction->goles_2;
+                                if ($diff2 < 0) {
+                                    $diff2 = $diff2 * (-1);
+                                }
+                                $diferencia_goles = $diff1 + $diff2;
 
                                 if ($diferencia_goles == 0) {
                                     $user_table["puntos"] += 10;
