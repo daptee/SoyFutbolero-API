@@ -581,7 +581,7 @@
                                 if ($diff1 < 0) {
                                     $diff1 = $diff1 * (-1);
                                 }
-                                $diff2 = $match->goles_ - $user_prediction->goles_2;
+                                $diff2 = $match->goles_2 - $user_prediction->goles_2;
                                 if ($diff2 < 0) {
                                     $diff2 = $diff2 * (-1);
                                 }
